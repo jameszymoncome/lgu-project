@@ -9,6 +9,14 @@ import {
   Typography,
   TextField,
   Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Collapse,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -18,16 +26,23 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
 function AccountManagement() {
   const navigate = useNavigate();
-  const [selectedIndex, setSelectedIndex] = useState(4); // Default to "Account Management"
+
+  const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
+  const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
 
   const handleListItemClick = (index, path) => {
-    setSelectedIndex(index);
-    navigate(path);
+    setSelectedIndex(index); // Update selected menu item
+    navigate(path); // Navigate to the selected route
+  };
+
+  const toggleReportMenu = () => {
+    setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
 
   const [formData, setFormData] = useState({
@@ -121,79 +136,106 @@ function AccountManagement() {
         <List>
           <ListItem
             button
-            style={{ color: selectedIndex === 0 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(0, "/home")}
           >
             <ListItemIcon>
-              <HomeIcon style={{ color: selectedIndex === 0 ? "#0F1D9F" : "inherit" }} />
+              <HomeIcon/>
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(1, "/ppe-entry")}
           >
             <ListItemIcon>
-              <AssignmentIcon style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }} />
+              <AssignmentIcon/>
             </ListItemIcon>
             <ListItemText primary="PPE Entry Form" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 2 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(2, "/inven-inspect")}
           >
             <ListItemIcon>
-              <ReportIcon style={{ color: selectedIndex === 2 ? "#0F1D9F" : "inherit" }} />
+              <ReportIcon/>
             </ListItemIcon>
             <ListItemText primary="Inspection" />
           </ListItem>
-          <ListItem
-            button
-            style={{ color: selectedIndex === 3 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(3, "/report")}
-          >
+          {/* Main Report Button */}
+          <ListItem button onClick={toggleReportMenu}>
             <ListItemIcon>
-              <ReportIcon style={{ color: selectedIndex === 3 ? "#0F1D9F" : "inherit" }} />
+              <ReportIcon />
             </ListItemIcon>
             <ListItemText primary="Report" />
+            {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          {/* Sub-Buttons (collapsible) */}
+          <Collapse in={isReportMenuOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                style={{ paddingLeft: 32 }}
+                onClick={() => handleListItemClick(4, "/sub-report1")}
+              >
+              <ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="Inventory" />
+              </ListItem>
+              <ListItem
+                button
+                style={{ paddingLeft: 32 }}
+                onClick={() => handleListItemClick(5, "/sub-report2")}
+              >
+                <ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="PAR & ICS" />
+              </ListItem>
+              <ListItem
+                button
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(5, "/sub-report2")}
+              >
+                <ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="Requested Item" />
+              </ListItem>
+            </List>
+          </Collapse>
           <ListItem
             button
-            style={{ color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }}
+            style={{ color: selectedIndex === 0 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(4, "/account-management")}
           >
             <ListItemIcon>
-              <AccountCircleIcon style={{ color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }} />
+              <AccountCircleIcon style={{ color: "#0F1D9F"}} />
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(5, "/manage-tables")}
+            onClick={() => handleListItemClick(5, "/ppe-entry")}
           >
             <ListItemIcon>
-              <TableChartIcon style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }} />
+              <TableChartIcon/>
             </ListItemIcon>
             <ListItemText primary="Manage Tables" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(6, "/profile")}
+            onClick={() => handleListItemClick(6, "/ppe-entry")}
           >
             <ListItemIcon>
-              <AccountCircleIcon style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }} />
+              <AccountCircleIcon/>
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </ListItem>
-          <ListItem
+          {/* Add other ListItems similarly */}
+          <ListItem 
             button
-            style={{ color: selectedIndex === 7 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(7, "/")}
-          >
+            onClick={() => handleListItemClick(7, "/")}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
