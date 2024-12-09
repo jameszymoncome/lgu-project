@@ -142,7 +142,7 @@ function AccountManagement() {
           <ListItem
             button
             style={{ color: selectedIndex === 2 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(2, "/inspection")}
+            onClick={() => handleListItemClick(2, "/inven-inspect")}
           >
             <ListItemIcon>
               <ReportIcon style={{ color: selectedIndex === 2 ? "#0F1D9F" : "inherit" }} />

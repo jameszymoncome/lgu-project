@@ -3,6 +3,7 @@ import Home from './pages/Home.jsx';
 import PPE_Entry from './pages/PPE_Entry.jsx';
 import Login from './features/Auth/Login.jsx';
 import AccountManagement from "./pages/AccountManagement.jsx";
+import Inven_Inspect from "./pages/Inven_Inspect.jsx";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/ppe-entry" element={<PPE_Entry />} />
         <Route path="/account-management" element={<AccountManagement />} />
+        <Route path="/inven-inspect" element={<Inven_Inspect />} />
       </Routes>
     </Router>
   );

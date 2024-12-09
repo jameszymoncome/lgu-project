@@ -120,11 +120,10 @@ function PPE_Entry() {
         <List>
           <ListItem
             button
-            style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(0, "/home")}
           >
             <ListItemIcon>
-              <HomeIcon style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }} />
+              <HomeIcon/>
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
@@ -134,24 +133,23 @@ function PPE_Entry() {
             onClick={() => handleListItemClick(1, "/ppe-entry")}
           >
             <ListItemIcon>
-              <AssignmentIcon style={{ color: selectedIndex === 0 ? "#0F1D9F" : "inherit" }} />
+              <AssignmentIcon style={{ color: "#0F1D9F"}} />
             </ListItemIcon>
             <ListItemText primary="PPE Entry Form" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 2 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(2, "/ppe-entry")}
+            onClick={() => handleListItemClick(2, "/inven-inspect")}
           >
             <ListItemIcon>
-              <ReportIcon style={{ color: selectedIndex === 2 ? "#0F1D9F" : "inherit" }} />
+              <ReportIcon/>
             </ListItemIcon>
             <ListItemText primary="Inspection" />
           </ListItem>
           {/* Main Report Button */}
           <ListItem button onClick={toggleReportMenu}>
             <ListItemIcon>
-              <ReportIcon style={{ color: selectedIndex === 3 ? "#0F1D9F" : "inherit" }} />
+              <ReportIcon />
             </ListItemIcon>
             <ListItemText primary="Report" />
             {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
@@ -161,31 +159,31 @@ function PPE_Entry() {
             <List component="div" disablePadding>
               <ListItem
                 button
-                style={{ paddingLeft: 32, color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }}
+                style={{ paddingLeft: 32 }}
                 onClick={() => handleListItemClick(4, "/sub-report1")}
               >
               <ListItemIcon>
-                <AssignmentIcon style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }} />
+                <AssignmentIcon/>
               </ListItemIcon>
                 <ListItemText primary="Inventory" />
               </ListItem>
               <ListItem
                 button
-                style={{ paddingLeft: 32, color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }}
+                style={{ paddingLeft: 32 }}
                 onClick={() => handleListItemClick(5, "/sub-report2")}
               >
                 <ListItemIcon>
-                <AssignmentIcon style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }} />
+                <AssignmentIcon/>
               </ListItemIcon>
                 <ListItemText primary="PAR & ICS" />
               </ListItem>
               <ListItem
                 button
-                style={{ paddingLeft: 32, color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }}
+                style={{ paddingLeft: 32}}
                 onClick={() => handleListItemClick(5, "/sub-report2")}
               >
                 <ListItemIcon>
-                <AssignmentIcon style={{ color: selectedIndex === 1 ? "#0F1D9F" : "inherit" }} />
+                <AssignmentIcon/>
               </ListItemIcon>
                 <ListItemText primary="Requested Item" />
               </ListItem>
@@ -193,38 +191,34 @@ function PPE_Entry() {
           </Collapse>
           <ListItem
             button
-            style={{ color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(4, "/account-management")}
           >
             <ListItemIcon>
-              <AccountCircleIcon style={{ color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }} />
+              <AccountCircleIcon/>
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(5, "/ppe-entry")}
           >
             <ListItemIcon>
-              <TableChartIcon style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }} />
+              <TableChartIcon/>
             </ListItemIcon>
             <ListItemText primary="Manage Tables" />
           </ListItem>
           <ListItem
             button
-            style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(6, "/ppe-entry")}
           >
             <ListItemIcon>
-              <AccountCircleIcon style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }} />
+              <AccountCircleIcon/>
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </ListItem>
           {/* Add other ListItems similarly */}
           <ListItem 
             button
-            style={{ color: selectedIndex === 7 ? "#0F1D9F" : "inherit" }}
             onClick={() => handleListItemClick(7, "/")}>
             <ListItemIcon>
               <LogoutIcon />
