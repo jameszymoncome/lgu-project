@@ -94,7 +94,7 @@ const Inven_Inspect = () => {
             <ListItemIcon>
               <ReportIcon/>
             </ListItemIcon>
-            <ListItemText primary="Report" />
+            <ListItemText primary="Records" />
             {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           <Collapse in={isReportMenuOpen} timeout="auto" unmountOnExit>

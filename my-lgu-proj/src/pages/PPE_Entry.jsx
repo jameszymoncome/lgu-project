@@ -28,6 +28,7 @@ import Header from "../components/Header/Header.jsx";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import axios from "axios"; // Import Axios for API calls
 
 const drawerWidth = 240;
 
@@ -73,8 +74,8 @@ function PPE_Entry() {
     }));
   };
 
-  // Add an item to the table
-  const handleAddItem = () => {
+   // Add an item to the table
+   const handleAddItem = () => {
     if (Object.values(formData).some((field) => !field)) {
       alert("Please fill out all fields.");
       return;
@@ -96,6 +97,23 @@ function PPE_Entry() {
       totalCost: "",
     });
   };
+
+  const handleSave = async () => {
+    if (entries.length === 0) {
+      alert("No entries to save.");
+      return;
+    }
+  
+    try {
+      const response = await axios.post("http://localhost:5000/ppe-entries", entries);
+      alert(response.data.message); // Show success message
+      setEntries([]); // Clear entries after saving
+    } catch (error) {
+      console.error("Error saving entries:", error.response.data); // Log detailed error response
+      alert("There was an error saving the entries.");
+    }
+  };
+  
 
   return (
     <div style={{ display: "flex" }}>
@@ -151,7 +169,7 @@ function PPE_Entry() {
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="Report" />
+            <ListItemText primary="Records" />
             {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           {/* Sub-Buttons (collapsible) */}
@@ -347,7 +365,7 @@ function PPE_Entry() {
           <Button 
             variant="outlined" 
             color="#0F1D9F"
-            onClick={() => console.log("Cancel clicked")} 
+            onClick={handleClear} 
             style={{ marginRight: "1rem" }}
           >
             Cancel
@@ -355,7 +373,7 @@ function PPE_Entry() {
           <Button 
             variant="contained" 
             color="primary" 
-            onClick={() => console.log("Save clicked")} 
+            onClick={handleSave} 
             style={{background: "#0F1D9F"}}
           >
             Save

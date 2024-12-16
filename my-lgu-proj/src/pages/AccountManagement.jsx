@@ -166,7 +166,7 @@ function AccountManagement() {
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="Report" />
+            <ListItemText primary="Records" />
             {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           {/* Sub-Buttons (collapsible) */}

@@ -1,33 +1,30 @@
-import React, { useState } from "react";
-import "./Home.css"; // Custom styles
-import Icon from "../assets/images/sample_icon.png";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Collapse} from "@mui/material";
+import React, { useState } from "react"; 
+import "./Inventory_report1.css"; 
+import { 
+  Drawer, List, ListItem, ListItemIcon, ListItemText, 
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Collapse 
+} from "@mui/material";
+import Header from "../components/Header/Header.jsx"; 
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import ReportIcon from "@mui/icons-material/Report";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { TextField, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { styled } from "@mui/system";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
-import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
+
 
 const drawerWidth = 240;
 
-function Home() {
-  const navigate = useNavigate();
+function Inventory_report1() {
+    const navigate = useNavigate();
 
   const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
-  const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
+  const [isReportMenuOpen, setReportMenuOpen] = useState(true); // Track sub-menu visibility
 
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index); // Update selected menu item
@@ -38,11 +35,49 @@ function Home() {
     setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
 
+
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const [selectedOption, setSelectedOption] = useState(""); 
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleDropdownChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    fontWeight: "bold",
+    fontSize: "16px",
+    color: "#0f1d9f", 
+    borderBottom: `2px solid #979797`,
+    textAlign: "center",
+    border : "1px solid #979797",
+  }));
+  
+  const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+    marginTop: "10px",
+    marginLeft: "30px", 
+    marginRight: "20px",
+    width: "100%",
+    maxWidth: "1120px",
+    borderRadius: "10px",
+    border: "1px solid #979797",
+    overflowY: "auto",
+  }));
+  
+  const StyledTableDataCell = styled(TableCell)(({ theme }) => ({
+    fontWeight: "normal", 
+    fontSize: "12px",
+    textAlign: "center",
+    border:"2px solid #979797"
+  }));
+
   return (
     <div style={{ display: "flex" }}>
-      {/* Header */}
       <Header />
-
+    
       {/* Sidebar using Drawer */}
       <Drawer
         variant="permanent"
@@ -61,11 +96,10 @@ function Home() {
         <List>
           <ListItem
             button
-            style={{ color: "#0F1D9F"}}
             onClick={() => handleListItemClick(0, "/home")}
           >
             <ListItemIcon>
-              <HomeIcon style={{ color:"#0F1D9F"}} />
+              <HomeIcon/>
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
@@ -110,10 +144,10 @@ function Home() {
               </ListItem>
               <ListItem
                 button
-                style={{ paddingLeft: 32}}
+                style={{ paddingLeft: 32, color: "#0F1D9F"}}
                 onClick={() => handleListItemClick(4, "/inventory")}
               >
-              <ListItemIcon>
+              <ListItemIcon style={{ color:"#0F1D9F"}} >
                 <AssignmentIcon/>
               </ListItemIcon>
                 <ListItemText primary="Inventory" />
@@ -159,81 +193,91 @@ function Home() {
         </List>
       </Drawer>
 
-      {/* Main Content */}
       <div
         style={{
           flexGrow: 1,
-          padding: "80px 20px", // Add top padding to account for the AppBar
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "auto", // Enables vertical scrolling
+          overflowX: "hidden", // Prevents horizontal scrolling
+          height: "100vh",
+          width: "100%", 
+          maxWidth: "1200px",
+          margin: "0 auto", 
+          padding: "10px", 
         }}
       >
-        <header>
-          <h1>Hello, Admin!</h1>
-          <input type="search" placeholder="Search" className="search-bar" />
-        </header>
 
-        {/* Summary Cards */}
-        <div className="summary-cards">
-          <div className="card">
-            <img src={Icon} alt="Asset Icon" />
-            <p>Total No. of Assets</p>
-          </div>
-          <div className="card">
-            <img src={Icon} alt="Issued Icon" />
-            <p>Total Issued Items</p>
-          </div>
-          <div className="card">
-            <img src={Icon} alt="Inspection Icon" />
-            <p>Items Due for Inspection</p>
-          </div>
-          <div className="card">
-            <img src={Icon} alt="Maintenance Icon" />
-            <p>Items in Need of Maintenance</p>
-          </div>
+      <div style={{ flexGrow: 1, padding: "10px" }}>
+        <div className="header-container">
+          <h1>Inventory Reports</h1>
+          <p className="text">Generate and View Inventory, Issuance, Inspections, and Status Reports</p>
         </div>
 
-        {/* Buttons and Recent Activity */}
-        <div className="actions-activity">
-          <div className="buttons" style={{ marginTop: "20px" }}>
-            <button className="add-item">+ Add Item</button>
-            <button className="request-item">Requested Item</button>
-            <button className="scan-item">Scan</button>
-          </div>
-          <div className="recent-activity">
-            <h2>Recent Activity</h2>
-            <TableContainer
-              component={Paper}
-              style={{
-                marginTop: "20px",
-                width: "100%",
-                maxWidth: "1200px",
-                height: "500px", // Fixed height
-                margin: "0 auto",
-              }}
+        <div className="search-dropdown-container" >
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="search-input"
+            InputProps={{
+              startAdornment: (
+                <SearchIcon className="search-icon" />
+              ),
+            }}
+          />
+
+          <FormControl variant="outlined" className="dropdown" >
+            <InputLabel>Filter</InputLabel>
+            <Select
+              value={selectedOption}
+              onChange={handleDropdownChange}
+              label="Filter"
             >
-              <Table size="medium">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", width: "500px" }}>Activity</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", width: "500px" }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", width: "500px" }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", width: "500px" }}>Details</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow sx={{ height: "80px" }}>
-                    <TableCell sx={{ fontSize: "1rem" }}>Asset Added</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>Completed</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>2024-12-01</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>Asset ID: 12345</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
+              <MenuItem value="">All</MenuItem>
+            </Select>
+          </FormControl>
         </div>
-      </div>
-    </div>
+
+        <StyledTableContainer component={Paper}>
+          <Table size="medium">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Department</StyledTableCell>
+                <StyledTableCell>Date</StyledTableCell>
+                <StyledTableCell>Action</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <StyledTableDataCell>-</StyledTableDataCell>
+                <StyledTableDataCell>-</StyledTableDataCell>
+                <StyledTableDataCell>
+                  <button
+                    style={{
+                      backgroundColor: "#0F1D9F",
+                      color: "white",
+                      border: "none",
+                      padding: "8px 16px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                    }}
+                    onClick={() => alert("View button clicked!")}
+                  >
+                    View
+                  </button>
+                </StyledTableDataCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </StyledTableContainer>
+      </div> 
+    </div>  
+</div>  
+
   );
 }
 
-export default Home;
+export default Inventory_report1;
