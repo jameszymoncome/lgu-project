@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-import "./PPE_Entry.css";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography,
-  TextField,
   Button,
   Table,
   TableBody,
@@ -16,109 +13,95 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Toolbar,
+  Typography,
+  TextField,
+  IconButton,
   Collapse,
 } from "@mui/material";
+import {
+  Add as AddIcon,
+  Print as PrintIcon,
+  FilterList as FilterIcon,
+} from "@mui/icons-material";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import ReportIcon from "@mui/icons-material/Report";
+import PeopleIcon from "@mui/icons-material/People";
+import SettingsIcon from "@mui/icons-material/Settings";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material"; // Import Edit and Delete Icons
 import Header from "../components/Header/Header.jsx";
-import { useNavigate } from "react-router-dom";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const drawerWidth = 240;
 
 function AccountManagement() {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  
   const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
   const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
-
+  
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index); // Update selected menu item
     navigate(path); // Navigate to the selected route
   };
-
+  
   const toggleReportMenu = () => {
     setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
 
-  const [formData, setFormData] = useState({
-    lastname: "",
-    firstname: "",
-    middlename: "",
-    suffix: "",
-    email: "",
-    contactNumber: "",
-    username: "",
-    password: "",
-    role: "",
-    department: "",
-  });
+  const handleAddAccount = () => {
+    navigate('/add-account')
+  }
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    // Add these functions to handle edit and delete actions
+  const handleEdit = (account) => {
+    console.log("Editing account:", account);
+    // Implement navigation or modal for editing the account
   };
 
-  // Handle Save
-  const handleSave = async () => {
-    if (Object.values(formData).some((field) => !field)) {
-      alert("Please fill out all fields.");
-      return;
-    }
-  
-    try {
-      const response = await fetch("http://localhost:5000/create-account", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        alert("Account saved successfully!");
-        handleClear();
-      } else {
-        alert(data.message || "Failed to save account.");
+  const handleDelete = (id) => {
+    console.log("Deleting account with ID:", id);
+    setAccounts((prevAccounts) => prevAccounts.filter((account) => account.id !== id));
+  };
+
+
+  const [accounts, setAccounts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch account data from the backend on component mount
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/accounts");
+        setAccounts(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
       }
-    } catch (error) {
-      console.error("Error saving account:", error);
-      alert("Error saving account. Please try again.");
-    }
-  };
-  
+    };
 
-  // Clear form inputs
-  const handleClear = () => {
-    setFormData({
-      lastname: "",
-      firstname: "",
-      middlename: "",
-      suffix: "",
-      email: "",
-      contactNumber: "",
-      username: "",
-      password: "",
-      role: "",
-      department: "",
-    });
-  };
+    fetchAccounts();
+  }, []);
+
+  // Filtered accounts based on search term
+  const filteredAccounts = accounts.filter((account) =>
+    `${account.lastname} ${account.firstname} ${account.middlename || ""}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={{ display: "flex" }}>
       {/* Header */}
       <Header />
 
-      {/* Sidebar */}
+      {/* Sidebar Drawer */}
       <Drawer
         variant="permanent"
         sx={{
@@ -164,7 +147,7 @@ function AccountManagement() {
           {/* Main Report Button */}
           <ListItem button onClick={toggleReportMenu}>
             <ListItemIcon>
-              <ReportIcon />
+              <ReportIcon/>
             </ListItemIcon>
             <ListItemText primary="Records" />
             {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
@@ -174,18 +157,8 @@ function AccountManagement() {
             <List component="div" disablePadding>
               <ListItem
                 button
-                style={{ paddingLeft: 32 }}
-                onClick={() => handleListItemClick(4, "/sub-report1")}
-              >
-              <ListItemIcon>
-                <AssignmentIcon/>
-              </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
-              <ListItem
-                button
-                style={{ paddingLeft: 32 }}
-                onClick={() => handleListItemClick(5, "/sub-report2")}
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(5, "/par-ics")}
               >
                 <ListItemIcon>
                 <AssignmentIcon/>
@@ -195,28 +168,28 @@ function AccountManagement() {
               <ListItem
                 button
                 style={{ paddingLeft: 32}}
-                onClick={() => handleListItemClick(5, "/sub-report2")}
+                onClick={() => handleListItemClick(4, "/inventory")}
               >
-                <ListItemIcon>
+              <ListItemIcon>
                 <AssignmentIcon/>
               </ListItemIcon>
-                <ListItemText primary="Requested Item" />
+                <ListItemText primary="Inventory" />
               </ListItem>
             </List>
           </Collapse>
           <ListItem
             button
-            style={{ color: selectedIndex === 0 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(4, "/account-management")}
+            style={{ color: "#0F1D9F"}}
+            onClick={() => handleListItemClick(6, "/account-management")}
           >
             <ListItemIcon>
-              <AccountCircleIcon style={{ color: "#0F1D9F"}} />
+              <PeopleIcon style={{ color: "#0F1D9F"}}/>
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(5, "/ppe-entry")}
+            onClick={() => handleListItemClick(5, "/manage-tables")}
           >
             <ListItemIcon>
               <TableChartIcon/>
@@ -232,7 +205,6 @@ function AccountManagement() {
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </ListItem>
-          {/* Add other ListItems similarly */}
           <ListItem 
             button
             onClick={() => handleListItemClick(7, "/")}>
@@ -245,101 +217,86 @@ function AccountManagement() {
       </Drawer>
 
       {/* Main Content */}
-      <div style={{ flexGrow: 1, padding: "2rem", backgroundColor: "#f5f5f5", marginTop: "4.2rem" }}>
-        <Typography variant="h4" gutterBottom style={{ fontWeight: "bold", color: "#0F1D9F" }}>
-          Add Account
+      <div style={{ flexGrow: 1, padding: "80px 20px" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "20px", color:"#0F1D9F" }}>
+          Account Management
         </Typography>
-        <Typography variant="h7" gutterBottom style={{ fontWeight: "bold", color: "#0F1D9F", marginBottom: "2rem" }}>
-          Account Information
-        </Typography>
-        <form style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "20px" }}>
-          <TextField
-            label="Lastname"
-            name="lastname"
-            value={formData.lastname}
-            onChange={handleChange}
-            required
-            style={{ flex: "1 1 20%" }}
-          />
-          <TextField
-            label="Firstname"
-            name="firstname"
-            value={formData.firstname}
-            onChange={handleChange}
-            required
-            style={{ flex: "1 1 20%" }}
-          />
-          <TextField
-            label="Middlename"
-            name="middlename"
-            value={formData.middlename}
-            onChange={handleChange}
-            style={{ flex: "1 1 20%" }}
-          />
-          <TextField
-            label="Suffix"
-            name="suffix"
-            value={formData.suffix}
-            onChange={handleChange}
-            style={{ flex: "1 1 20%" }}
-          />
-          <TextField
-            label="Email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-          <TextField
-            label="Contact Number"
-            name="contactNumber"
-            value={formData.contactNumber}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-          <TextField
-            label="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-          <TextField
-            label="Role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-          <TextField
-            label="Department"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-        </form>
 
-        <div style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="outlined" onClick={handleClear} style={{ marginRight: "1rem" }}>
-            Cancel
-          </Button>
+        {/* Search Bar */}
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+          <TextField
+            variant="outlined"
+            placeholder="Search accounts..."
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ marginRight: "10px", flexGrow: 1 }}
+          />
           <Button
             variant="contained"
-            onClick={handleSave}
-            style={{ backgroundColor: "#0F1D9F", color: "#fff" }}
+            startIcon={<AddIcon />}
+            sx={{ backgroundColor: "#0F1D9F", color: "white" }}
+            onClick={handleAddAccount}
           >
-            Save
+            Add Account
           </Button>
+          <Button variant="outlined" startIcon={<PrintIcon />} sx={{ marginLeft: "10px" }}>
+            Print
+          </Button>
+          <IconButton>
+            <FilterIcon />
+          </IconButton>
         </div>
+
+        {/* Accounts Table */}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold", color: "#0F1D9F" }}>ID</TableCell>
+                <TableCell sx={{ fontWeight: "bold", color: "#0F1D9F" }}>Full Name</TableCell>
+                <TableCell sx={{ fontWeight: "bold", color: "#0F1D9F" }}>Role</TableCell>
+                <TableCell sx={{ fontWeight: "bold", color: "#0F1D9F" }}>Department</TableCell>
+                <TableCell sx={{ fontWeight: "bold", color: "#0F1D9F" }}>Actions</TableCell> {/* New Actions Column */}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredAccounts.map((account) => (
+                <TableRow key={account.id}>
+                  <TableCell>{account.id}</TableCell>
+                  <TableCell>
+                    {`${account.lastname}, ${account.firstname} ${account.middlename || ""}`}
+                  </TableCell>
+                  <TableCell>{account.role}</TableCell>
+                  <TableCell>{account.department}</TableCell>
+                  <TableCell>
+                    {/* Edit Button */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(account)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    {/* Delete Button */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDelete(account.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredAccounts.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    No accounts found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </div>
   );

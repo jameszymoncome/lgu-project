@@ -26,6 +26,7 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Header from "../components/Header/Header.jsx";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import PeopleIcon from "@mui/icons-material/People";
 import { useNavigate } from "react-router-dom";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import axios from "axios"; // Import Axios for API calls
@@ -177,18 +178,8 @@ function PPE_Entry() {
             <List component="div" disablePadding>
               <ListItem
                 button
-                style={{ paddingLeft: 32 }}
-                onClick={() => handleListItemClick(4, "/sub-report1")}
-              >
-              <ListItemIcon>
-                <AssignmentIcon/>
-              </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
-              <ListItem
-                button
-                style={{ paddingLeft: 32 }}
-                onClick={() => handleListItemClick(5, "/sub-report2")}
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(5, "/par-ics")}
               >
                 <ListItemIcon>
                 <AssignmentIcon/>
@@ -198,12 +189,12 @@ function PPE_Entry() {
               <ListItem
                 button
                 style={{ paddingLeft: 32}}
-                onClick={() => handleListItemClick(5, "/sub-report2")}
+                onClick={() => handleListItemClick(4, "/inventory")}
               >
-                <ListItemIcon>
+              <ListItemIcon>
                 <AssignmentIcon/>
               </ListItemIcon>
-                <ListItemText primary="Requested Item" />
+                <ListItemText primary="Inventory" />
               </ListItem>
             </List>
           </Collapse>
@@ -212,13 +203,13 @@ function PPE_Entry() {
             onClick={() => handleListItemClick(4, "/account-management")}
           >
             <ListItemIcon>
-              <AccountCircleIcon/>
+              <PeopleIcon/>
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(5, "/ppe-entry")}
+            onClick={() => handleListItemClick(5, "/manage-tables")}
           >
             <ListItemIcon>
               <TableChartIcon/>

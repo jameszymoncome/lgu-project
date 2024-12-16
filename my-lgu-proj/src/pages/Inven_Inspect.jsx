@@ -9,6 +9,7 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import PeopleIcon from "@mui/icons-material/People";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
@@ -101,33 +102,23 @@ const Inven_Inspect = () => {
             <List component="div" disablePadding>
               <ListItem
                 button
-                style={{ paddingLeft: 32, color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }}
-                onClick={() => handleListItemClick(4, "/sub-report1")}
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(5, "/par-ics")}
               >
                 <ListItemIcon>
-                  <AssignmentIcon style={{ color: selectedIndex === 4 ? "#0F1D9F" : "inherit" }} />
-                </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
-              <ListItem
-                button
-                style={{ paddingLeft: 32, color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }}
-                onClick={() => handleListItemClick(5, "/sub-report2")}
-              >
-                <ListItemIcon>
-                  <AssignmentIcon style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }} />
-                </ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
                 <ListItemText primary="PAR & ICS" />
               </ListItem>
               <ListItem
                 button
-                style={{ paddingLeft: 32, color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
-                onClick={() => handleListItemClick(6, "/sub-report3")}
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(4, "/inventory")}
               >
-                <ListItemIcon>
-                  <AssignmentIcon style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }} />
-                </ListItemIcon>
-                <ListItemText primary="Requested Item" />
+              <ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="Inventory" />
               </ListItem>
             </List>
           </Collapse>
@@ -137,14 +128,14 @@ const Inven_Inspect = () => {
             onClick={() => handleListItemClick(7, "/account-management")}
           >
             <ListItemIcon>
-              <AccountCircleIcon style={{ color: selectedIndex === 7 ? "#0F1D9F" : "inherit" }} />
+              <PeopleIcon style={{ color: selectedIndex === 7 ? "#0F1D9F" : "inherit" }} />
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
           <ListItem
             button
             style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(5, "/ppe-entry")}
+            onClick={() => handleListItemClick(5, "/manage-tables")}
           >
             <ListItemIcon>
               <TableChartIcon style={{ color: selectedIndex === 5 ? "#0F1D9F" : "inherit" }} />

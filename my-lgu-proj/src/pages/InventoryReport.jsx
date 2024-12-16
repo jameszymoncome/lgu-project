@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import "./PAR_ICS2.css";
+import React, { useState, useRef} from "react";
+import "./Inventory_report.css";
 import {
   Drawer,
   List,
@@ -13,6 +13,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Collapse,
   TextField,
   MenuItem,
   Select,
@@ -28,9 +29,10 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
 import PrintIcon from "@mui/icons-material/Print";
+import PeopleIcon from "@mui/icons-material/People";
 import { styled } from "@mui/system";
-
-
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { useNavigate } from "react-router-dom";
 
 
 const drawerWidth = 240;
@@ -59,7 +61,6 @@ const TextInput = () => (
       justifyContent: "flex-start",
     }}
   >
-    {/* First Input */}
     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
       <label htmlFor="entity-name" className="label">
         Entity Name:
@@ -71,7 +72,6 @@ const TextInput = () => (
         placeholder="Enter entity name"
       />
     </div>
-    {/* Second Input */}
     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
       <label htmlFor="fund-cluster" className="label">
         Fund Cluster:
@@ -85,59 +85,92 @@ const TextInput = () => (
     </div>
   </div>
 );
- 
-const StyledTableCell = styled(TableCell)(({ isHeader }) => ({
+
+
+const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+  marginTop: "10px",
+  marginLeft: "30px",
+  marginRight: "20px",
+  width: "100%",
+  maxWidth: "1130px",
+  overflowY: "auto",
+  borderRadius: "10px",
+  border: "1px solid #979797",
+}));
+
+
+const StyledTableDataCell = styled(TableCell)(({ theme, isHeader }) => ({
   fontWeight: isHeader ? "bold" : "normal",
   fontSize: isHeader ? "16px" : "14px",
   color: isHeader ? "#0f1d9f" : "#333333",
   textAlign: "center",
-  borderBottom: "2px solid #979797",
   padding: "10px 16px",
+  borderBottom: "2px solid #979797",
+  borderLeft: "none",
+  borderRight: "none",
 }));
 
 
-const StyledTableContainer = styled(TableContainer)({
-  marginTop: "10px",
-  marginLeft: "0px",
-  marginRight: "20px",
-  width: "100%",
-  maxWidth: "1490px",
-  borderRadius: "10px",
-  border: "1px solid #979797",
-  overflowY: "auto",
-});
+function InventoryReport() {
+    const navigate = useNavigate();
+
+  const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
+  const [isReportMenuOpen, setReportMenuOpen] = useState(true); // Track sub-menu visibility
+
+  const handleListItemClick = (index, path) => {
+    setSelectedIndex(index); // Update selected menu item
+    navigate(path); // Navigate to the selected route
+  };
+
+  const toggleReportMenu = () => {
+    setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
+  };
 
 
-
-
-function PAR_ICS2() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOption1, setSelectedOption1] = useState("");
+  const [selectedOption2, setSelectedOption2] = useState("");
 
 
-  // Sample data for the table
   const tableData = [
     {
-      quantity: 10,
-      unit: "Pieces",
       description: "Laptop",
       propertyNo: "ABC123",
+      unit: "Piece",
+      quantity: 10,
       dateAcquired: "2022-01-01",
       unitCost: 50000,
       totalCost: 500000,
     },
     {
-      quantity: 5,
-      unit: "Pieces",
       description: "Desktop Computer",
       propertyNo: "XYZ456",
+      unit: "Piece",
+      quantity: 5,
       dateAcquired: "2021-06-15",
       unitCost: 30000,
       totalCost: 150000,
     },
+    {
+      description: "Projector",
+      propertyNo: "LMN789",
+      unit: "Piece",
+      quantity: 3,
+      dateAcquired: "2023-03-10",
+      unitCost: 15000,
+      totalCost: 45000,
+    },
+    {
+      description: "Air Conditioner",
+      propertyNo: "DEF123",
+      unit: "Unit",
+      quantity: 2,
+      dateAcquired: "2020-12-05",
+      unitCost: 25000,
+      totalCost: 50000,
+    },
   ];
-
-
+ 
   const tableRef = useRef();
 
 
@@ -151,8 +184,13 @@ function PAR_ICS2() {
   };
 
 
+  const handleDropdownChange2 = (event) => {
+    setSelectedOption2(event.target.value);
+  };
+
+
   const handlePrint = () => {
-    const content = tableRef.current.innerHTML;  
+    const content = tableRef.current.innerHTML;
     const reportType = selectedOption1 === "optionA" ? "Property Acknowledgement Receipt" : "Inventory Custodian Slip";
    
     const printContent = `
@@ -163,85 +201,83 @@ function PAR_ICS2() {
             body {
               font-family: Arial, sans-serif;
               margin: 20px;
-              font-size: 10px; /* Set default font size to 10px */
+              font-size: 10px;
             }
- 
+           
             .report-title {
               text-align: center;
-              font-size: 18px; /* Keep font size of 18px for report title */
-              font-weight: bold; /* Make report title bold */
+              font-size: 18px;
+              font-weight: bold;
             }
- 
+           
             .header {
               margin-top: 20px;
               display: grid;
               grid-template-columns: repeat(2, 1fr);
               gap: 10px;
             }
- 
+           
             .header-item {
               display: flex;
               align-items: center;
-              font-size: 10px; /* Apply 10px font size to header-item text */
-              font-weight: bold; /* Make header-item text bold */
+              font-size: 10px;
+              font-weight: bold;
             }
- 
+           
             .table {
               width: 100%;
               border-collapse: collapse;
               margin-top: 10px;
             }
- 
+           
             .table, .table th, .table td {
               border: 1px solid black;
             }
- 
+           
             .table th, .table td {
               padding: 10px;
               text-align: center;
               font-size: 10px;
-              /* No bold for table content */
             }
- 
+           
             .footer {
               margin-top: 30px;
               display: flex;
               justify-content: space-between;
             }
- 
+           
             .footer div {
               text-align: center;
-              font-size: 10px; /* Set footer text size to 10px */
-              font-weight: bold; /* Make footer text bold */
+              font-size: 10px;
+              font-weight: bold;
             }
- 
+           
             .signature {
               margin-top: 20px;
               border-top: 1px solid black;
               width: 100%;
-              font-weight: bold; /* Set font weight to bold */
+              font-weight: bold;
             }
           </style>
         </head>
         <body>
           <div class="report-title">${reportType}</div>
- 
+         
           <div class="header">
             <div class="header-item"><strong>Entity Name:</strong> ____________________________</div>
             <div class="header-item"><strong>Fund Cluster:</strong> ____________________________</div>
             <div class="header-item"><strong>Date:</strong> ____________________________</div>
             <div class="header-item"><strong>PAR No.:</strong> ____________________________</div>
           </div>
- 
+         
           <table class="table">
             <thead>
               <tr>
-                <th>Quantity</th>
-                <th>Unit</th>
                 <th>Description</th>
                 <th>Property No.</th>
-                <th>Date Acquired</th>
                 <th>Unit Cost</th>
+                <th>Quantity</th>
+                <th>Date Acquired</th>
                 <th>Total Cost</th>
               </tr>
             </thead>
@@ -250,19 +286,18 @@ function PAR_ICS2() {
                 .map(
                   (row) => `
                     <tr>
-                      <td>${row.quantity}</td>
-                      <td>${row.unit}</td>
                       <td>${row.description}</td>
-                      <td>${row.propertyNo}</td>
-                      <td>${row.dateAcquired}</td>
+                      <td>${row.propertyNo}</td>+
                       <td>${row.unitCost}</td>
+                      <td>${row.quantity}</td>
+                      <td>${row.dateAcquired}</td>
                       <td>${row.totalCost}</td>
                     </tr>`
                 )
                 .join("")}
             </tbody>
           </table>
- 
+         
           <div class="footer">
             <div>
               <div>Issued by:</div>
@@ -282,16 +317,17 @@ function PAR_ICS2() {
         </body>
       </html>
     `;
- 
+
+
     const printWindow = window.open("", "", "width=800,height=600");
     printWindow.document.write(printContent);
     printWindow.document.close();
     printWindow.print();
-      printWindow.onafterprint = () => {
+   
+    printWindow.onafterprint = () => {
       printWindow.close();
     };
   };
- 
 
 
   return (
@@ -307,53 +343,102 @@ function PAR_ICS2() {
             boxSizing: "border-box",
             marginTop: "4rem",
             backgroundColor: "#FFFF",
+            cursor: "pointer",
           },
         }}
       >
         <List>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(0, "/home")}
+          >
             <ListItemIcon>
-              <HomeIcon />
+              <HomeIcon/>
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(1, "/ppe-entry")}
+          >
             <ListItemIcon>
-              <AssignmentIcon />
+              <AssignmentIcon/>
             </ListItemIcon>
             <ListItemText primary="PPE Entry Form" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(2, "/inven-inspect")}
+          >
             <ListItemIcon>
-              <ReportIcon />
+              <ReportIcon/>
             </ListItemIcon>
             <ListItemText primary="Inspection" />
           </ListItem>
-          <ListItem button style={{ background: "#E4E7F5", color: "#0F1D9F" }}>
+          {/* Main Report Button */}
+          <ListItem button onClick={toggleReportMenu}>
             <ListItemIcon>
-              <ReportIcon style={{ color: "#0F1D9F" }} />
+              <ReportIcon/>
             </ListItemIcon>
-            <ListItemText primary="Report" />
+            <ListItemText primary="Records" />
+            {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-          <ListItem button>
+          {/* Sub-Buttons (collapsible) */}
+          <Collapse in={isReportMenuOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(5, "/par-ics")}
+              >
+                <ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="PAR & ICS" />
+              </ListItem>
+              <ListItem
+                button
+                style={{ paddingLeft: 32, color: "#0F1D9F"}}
+                onClick={() => handleListItemClick(4, "/inventory")}
+              >
+              <ListItemIcon style={{ color:"#0F1D9F"}} >
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="Inventory" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <ListItem
+            button
+            style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
+            onClick={() => handleListItemClick(6, "/account-management")}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <PeopleIcon/>
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(5, "/manage-tables")}
+          >
             <ListItemIcon>
-              <TableChartIcon />
+              <TableChartIcon/>
             </ListItemIcon>
             <ListItemText primary="Manage Tables" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(6, "/ppe-entry")}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <AccountCircleIcon/>
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </ListItem>
-          <ListItem button>
+          <ListItem 
+            button
+            onClick={() => handleListItemClick(7, "/")}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -361,8 +446,6 @@ function PAR_ICS2() {
           </ListItem>
         </List>
       </Drawer>
-
-
       <div
         style={{
           flexGrow: 1,
@@ -376,100 +459,118 @@ function PAR_ICS2() {
           margin: "0 auto",
         }}
       >
-        {/* Header and Buttons */}
         <div className="header-section-container">
           <div className="header-content">
             <div className="left-column">
-              <h1>PAR and ICS Report</h1>
+              <h1>Inventory Report</h1>
               <p>Generate and View Inventory, Issuance, Inspections, and Status Reports</p>
             </div>
-
-
             <button className="print-button" onClick={handlePrint} style={buttonStyles}>
               <PrintIcon style={{ marginRight: "10px" }} />
-              Print Report
+              Generate Report
             </button>
           </div>
         </div>
-
-
-        {/* Search and Dropdown */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+        <div
+          className="search-dropdown-container"
+          style={{
+            display: "flex",
+            gap: "10px",
+            alignItems: "center",
+            marginBottom: "10px",
+          }}
+        >
           <TextField
             label="Search"
             variant="outlined"
             value={searchTerm}
             onChange={handleSearchChange}
-            style={{ flex: 1 }}
+            className="search-input"
+            style={{maxWidth: "750px" }}
             InputProps={{
               startAdornment: <SearchIcon />,
             }}
           />
-
-
-          {/* Dropdown Selection */}
-          <FormControl style={{ minWidth: "150px" }}>
-            <InputLabel>Report Type</InputLabel>
-            <Select value={selectedOption1} onChange={handleDropdownChange1} label="Report Type">
-              <MenuItem value="optionA">Property Acknowledgement Receipt(PAR)</MenuItem>
-              <MenuItem value="optionB">Inventory Custodian Slip (ICS)</MenuItem>
+          <FormControl
+            variant="outlined"
+            className="dropdown"
+            style={{ maxWidth: "230px"}}
+          >
+            <InputLabel>Department</InputLabel>
+            <Select
+              value={selectedOption1}
+              onChange={handleDropdownChange1}
+              label="Department"
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="optionA">General Sevices Office</MenuItem>
+              <MenuItem value="optionB">MDRRMO</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            variant="outlined"
+            className="dropdown"
+            style={{
+              maxWidth: "160px",
+            }}
+          >
+            <InputLabel>Year</InputLabel>
+            <Select
+              value={selectedOption2}
+              onChange={handleDropdownChange2}
+              label="Year"
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="optionC">2023</MenuItem>
+              <MenuItem value="optionD">2024</MenuItem>
             </Select>
           </FormControl>
         </div>
-
-
-        {/* Table Data */}
-        <StyledTableContainer ref={tableRef} component={Paper}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <StyledTableCell isHeader={true}>Quantity</StyledTableCell>
-        <StyledTableCell isHeader={true}>Unit</StyledTableCell>
-        <StyledTableCell isHeader={true}>Description</StyledTableCell>
-        <StyledTableCell isHeader={true}>Property No.</StyledTableCell>
-        <StyledTableCell isHeader={true}>Date Acquired</StyledTableCell>
-        <StyledTableCell isHeader={true}>Unit Cost</StyledTableCell>
-        <StyledTableCell isHeader={true}>Total Cost</StyledTableCell>
-        <StyledTableCell isHeader={true}>Action</StyledTableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {tableData.map((row, index) => (
-        <TableRow key={index}>
-          <StyledTableCell>{row.quantity}</StyledTableCell>
-          <StyledTableCell>{row.unit}</StyledTableCell>
-          <StyledTableCell>{row.description}</StyledTableCell>
-          <StyledTableCell>{row.propertyNo}</StyledTableCell>
-          <StyledTableCell>{row.dateAcquired}</StyledTableCell>
-          <StyledTableCell>{row.unitCost}</StyledTableCell>
-          <StyledTableCell>{row.totalCost}</StyledTableCell>
-          <StyledTableCell>
-            <button
-              style={{
-                backgroundColor: "#0F1D9F",
-                color: "white",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "14px",
-              }}
-              onClick={() => alert("View button clicked!")}
-            >
-              View
-            </button>
-          </StyledTableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</StyledTableContainer>
-
-
+        <StyledTableContainer component={Paper} ref={tableRef} style={{ maxWidth: "1160px" }}>
+      <Table size="medium">
+        <TableHead>
+          <TableRow>
+            <StyledTableDataCell isHeader={true}>Description</StyledTableDataCell>
+            <StyledTableDataCell isHeader={true}>Property/Inventory No.</StyledTableDataCell>
+            <StyledTableDataCell isHeader={true}>Unit</StyledTableDataCell>
+            <StyledTableDataCell isHeader={true}>Quantity</StyledTableDataCell>
+            <StyledTableDataCell isHeader={true}>Date Acquired</StyledTableDataCell>
+            <StyledTableDataCell isHeader={true}>Action</StyledTableDataCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tableData.map((row, index) => (
+            <TableRow key={index}>
+              <StyledTableDataCell>{row.description}</StyledTableDataCell>
+              <StyledTableDataCell>{row.propertyNo}</StyledTableDataCell>
+              <StyledTableDataCell>{row.unit}</StyledTableDataCell>
+              <StyledTableDataCell>{row.quantity}</StyledTableDataCell>
+              <StyledTableDataCell>{row.dateAcquired}</StyledTableDataCell>
+              <StyledTableDataCell>
+                <button
+                  style={{
+                    backgroundColor: "#0F1D9F",
+                    color: "white",
+                    border: "none",
+                    padding: "8px 16px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                  onClick={() => alert("View button clicked!")}
+                >
+                  View
+                </button>
+              </StyledTableDataCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </StyledTableContainer>
       </div>
     </div>
   );
 }
 
 
-export default PAR_ICS2;
+export default InventoryReport;

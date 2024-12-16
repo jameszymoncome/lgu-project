@@ -8,6 +8,7 @@ import ReportIcon from "@mui/icons-material/Report";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PeopleIcon from "@mui/icons-material/People";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
   Table,
@@ -126,13 +127,13 @@ function Home() {
             onClick={() => handleListItemClick(6, "/account-management")}
           >
             <ListItemIcon>
-              <AccountCircleIcon/>
+              <PeopleIcon/>
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(5, "/ppe-entry")}
+            onClick={() => handleListItemClick(5, "/manage-tables")}
           >
             <ListItemIcon>
               <TableChartIcon/>

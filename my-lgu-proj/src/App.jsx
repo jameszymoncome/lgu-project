@@ -4,7 +4,9 @@ import PPE_Entry from './pages/PPE_Entry.jsx';
 import Login from './features/Auth/Login.jsx';
 import AccountManagement from "./pages/AccountManagement.jsx";
 import Inven_Inspect from "./pages/Inven_Inspect.jsx";
-import Inventory_report1 from "./pages/Inventory_report1.jsx";
+import Inventory_report1 from "./pages/InventoryReport.jsx";
+import ManageTables from "./pages/ManageTables.jsx";
+import AddAccount from "./pages/AddAccount.jsx";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/account-management" element={<AccountManagement />} />
         <Route path="/inven-inspect" element={<Inven_Inspect />} />
         <Route path="/inventory" element={<Inventory_report1 />} />
+        <Route path="/manage-tables" element={<ManageTables />} />
+        <Route path="/add-account" element={<AddAccount />} />
       </Routes>
     </Router>
   );
