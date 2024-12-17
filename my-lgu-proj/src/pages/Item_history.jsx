@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // Import useState and useEffect
 import "./Item_history.css";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Collapse, Typography } from "@mui/material";
 import Header from "../components/Header/Header.jsx";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -9,6 +9,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { styled } from "@mui/system";
+import PeopleIcon from "@mui/icons-material/People";
+import { useNavigate } from "react-router-dom";
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import axios from "axios"; // Import Axios for API calls
 
 
 
@@ -17,6 +21,7 @@ const drawerWidth = 240;
 
 
 const TextInput = () => {
+  
     return (
       <div className="input-container">
         {/* First Input */}
@@ -102,6 +107,19 @@ const TextInput = () => {
   }));
  
 function Item_history() {
+  const navigate = useNavigate();
+
+  const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
+    const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
+  
+    const handleListItemClick = (index, path) => {
+      setSelectedIndex(index); // Update selected menu item
+      navigate(path); // Navigate to the selected route
+    };
+  
+    const toggleReportMenu = () => {
+      setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
+    };
   return (
     <div style={{ display: "flex" }}>
       <Header />
@@ -115,53 +133,102 @@ function Item_history() {
             boxSizing: "border-box",
             marginTop: "4rem",
             backgroundColor: "#FFFF",
+            cursor: "pointer",
           },
         }}
       >
         <List>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(0, "/home")}
+          >
             <ListItemIcon>
-              <HomeIcon />
+              <HomeIcon/>
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(1, "/ppe-entry")}
+          >
             <ListItemIcon>
-              <AssignmentIcon />
+              <AssignmentIcon/>
             </ListItemIcon>
             <ListItemText primary="PPE Entry Form" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(2, "/inven-inspect")}
+          >
             <ListItemIcon>
-              <ReportIcon />
+              <ReportIcon/>
             </ListItemIcon>
             <ListItemText primary="Inspection" />
           </ListItem>
-          <ListItem button style={{ background: "#E4E7F5", color: "#0F1D9F" }}>
+          {/* Main Report Button */}
+          <ListItem button onClick={toggleReportMenu}>
             <ListItemIcon>
-              <ReportIcon style={{ color: "#0F1D9F" }} />
+              <ReportIcon/>
             </ListItemIcon>
-            <ListItemText primary="Report" />
+            <ListItemText primary="Records" />
+            {isReportMenuOpen ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-          <ListItem button>
+          {/* Sub-Buttons (collapsible) */}
+          <Collapse in={isReportMenuOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                style={{ paddingLeft: 32}}
+                onClick={() => handleListItemClick(5, "/par-ics")}
+              >
+                <ListItemIcon>
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="PAR & ICS" />
+              </ListItem>
+              <ListItem
+                button
+                style={{ paddingLeft: 32, color: "#0F1D9F"}}
+                onClick={() => handleListItemClick(4, "/inventory")}
+              >
+              <ListItemIcon style={{ color:"#0F1D9F"}} >
+                <AssignmentIcon/>
+              </ListItemIcon>
+                <ListItemText primary="Inventory" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <ListItem
+            button
+            style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
+            onClick={() => handleListItemClick(6, "/account-management")}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <PeopleIcon/>
             </ListItemIcon>
             <ListItemText primary="Account Management" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(5, "/manage-tables")}
+          >
             <ListItemIcon>
-              <TableChartIcon />
+              <TableChartIcon/>
             </ListItemIcon>
             <ListItemText primary="Manage Tables" />
           </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(6, "/ppe-entry")}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <AccountCircleIcon/>
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </ListItem>
-          <ListItem button>
+          <ListItem 
+            button
+            onClick={() => handleListItemClick(7, "/")}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>

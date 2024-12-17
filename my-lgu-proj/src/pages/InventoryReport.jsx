@@ -126,6 +126,10 @@ function InventoryReport() {
     setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
 
+  const handleViewClick = () =>{
+    navigate("/item-history")
+  }
+
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOption1, setSelectedOption1] = useState("");
@@ -466,7 +470,7 @@ function InventoryReport() {
         <div className="header-section-container">
           <div className="header-content">
             <div className="left-column">
-              <h1>Inventory Report</h1>
+              <h1>Inventory Records</h1>
               <p>Generate and View Inventory, Issuance, Inspections, and Status Reports</p>
             </div>
             <button className="print-button" onClick={handlePrint} style={buttonStyles}>
@@ -563,7 +567,7 @@ function InventoryReport() {
                     cursor: "pointer",
                     fontSize: "14px",
                   }}
-                  onClick={() => alert("View button clicked!")}
+                  onClick={handleViewClick}
                 >
                   View
                 </button>

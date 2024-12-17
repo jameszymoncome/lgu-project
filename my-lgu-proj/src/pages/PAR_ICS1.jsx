@@ -198,7 +198,7 @@ function PAR_ICS1() {
       }}>
         {/* Header Container */}
         <div className="header-container">
-          <h1>PAR and ICS Report</h1>
+          <h1>PAR and ICS Records</h1>
           <p className="text">Generate and View Inventory, Issuance, Inspections, and Status Reports</p>
         </div>
 

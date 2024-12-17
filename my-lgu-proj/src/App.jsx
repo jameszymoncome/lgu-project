@@ -12,6 +12,7 @@ import Home_encoder from "./pages/Home(encoder).jsx";
 import Home_user from "./pages/Home(user).jsx";
 import PAR_ICS2 from "./pages/PAR_ICS2.jsx";
 import Profile from "./pages/Profile.jsx";
+import Item_history from "./pages/Item_history.jsx";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/home-user" element={<Home_user />} />
         <Route path="/par-ics2" element={<PAR_ICS2 />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/item-history" element={<Item_history />} />
       </Routes>
     </Router>
   );

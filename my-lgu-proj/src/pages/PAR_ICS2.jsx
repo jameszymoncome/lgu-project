@@ -416,7 +416,7 @@ function PAR_ICS2() {
         <div className="header-section-container">
           <div className="header-content">
             <div className="left-column">
-              <h1>PAR and ICS Report</h1>
+              <h1>PAR and ICS Records</h1>
               <p>Generate and View Inventory, Issuance, Inspections, and Status Reports</p>
             </div>
 
