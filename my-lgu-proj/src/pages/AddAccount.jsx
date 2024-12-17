@@ -9,14 +9,11 @@ import {
   Typography,
   TextField,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Collapse,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -27,23 +24,22 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PeopleIcon from "@mui/icons-material/People";
 import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
 function AddAccount() {
   const navigate = useNavigate();
-
-  const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
-  const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isReportMenuOpen, setReportMenuOpen] = useState(false);
 
   const handleListItemClick = (index, path) => {
-    setSelectedIndex(index); // Update selected menu item
-    navigate(path); // Navigate to the selected route
+    setSelectedIndex(index);
+    navigate(path);
   };
 
   const toggleReportMenu = () => {
-    setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
+    setReportMenuOpen((prevOpen) => !prevOpen);
   };
 
   const [formData, setFormData] = useState({
@@ -59,7 +55,16 @@ function AddAccount() {
     department: "",
   });
 
-  // Handle input changes
+  const departments = [
+    "GSO",
+    "MAYOR'S OFFICE",
+    "ACCOUNTING",
+    "ENGINEERING",
+    "MPDO",
+  ];
+
+  const roles = ["ENCODER", "ADMIN", "USER(VIEWING ONLY)"];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -68,22 +73,19 @@ function AddAccount() {
     }));
   };
 
-  // Handle Save
   const handleSave = async () => {
     if (Object.values(formData).some((field) => !field)) {
       alert("Please fill out all fields.");
       return;
     }
-  
+
     try {
       const response = await fetch("http://localhost:5000/create-account", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         alert("Account saved successfully!");
@@ -96,9 +98,7 @@ function AddAccount() {
       alert("Error saving account. Please try again.");
     }
   };
-  
 
-  // Clear form inputs
   const handleClear = () => {
     setFormData({
       lastname: "",
@@ -116,10 +116,7 @@ function AddAccount() {
 
   return (
     <div style={{ display: "flex" }}>
-      {/* Header */}
       <Header />
-
-      {/* Sidebar */}
       <Drawer
         variant="permanent"
         sx={{
@@ -235,13 +232,9 @@ function AddAccount() {
         </List>
       </Drawer>
 
-      {/* Main Content */}
       <div style={{ flexGrow: 1, padding: "2rem", backgroundColor: "#f5f5f5", marginTop: "4.2rem" }}>
         <Typography variant="h4" gutterBottom style={{ fontWeight: "bold", color: "#0F1D9F" }}>
           Add Account
-        </Typography>
-        <Typography variant="h7" gutterBottom style={{ fontWeight: "bold", color: "#0F1D9F", marginBottom: "2rem" }}>
-          Account Information
         </Typography>
         <form style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "20px" }}>
           <TextField
@@ -303,20 +296,38 @@ function AddAccount() {
             onChange={handleChange}
             style={{ flex: "1 1 45%" }}
           />
-          <TextField
-            label="Role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
-          <TextField
-            label="Department"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            style={{ flex: "1 1 45%" }}
-          />
+
+          {/* Department Dropdown */}
+          <FormControl style={{ flex: "1 1 45%" }}>
+            <InputLabel>Department</InputLabel>
+            <Select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+            >
+              {departments.map((dept) => (
+                <MenuItem key={dept} value={dept}>
+                  {dept}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Role Dropdown */}
+          <FormControl style={{ flex: "1 1 45%" }}>
+            <InputLabel>Role</InputLabel>
+            <Select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              {roles.map((role) => (
+                <MenuItem key={role} value={role}>
+                  {role}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </form>
 
         <div style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-end" }}>

@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
-function Home() {
+function Home_user() {
   const navigate = useNavigate();
 
   const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
@@ -70,24 +70,6 @@ function Home() {
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
-          <ListItem
-            button
-            onClick={() => handleListItemClick(1, "/ppe-entry")}
-          >
-            <ListItemIcon>
-              <AssignmentIcon/>
-            </ListItemIcon>
-            <ListItemText primary="PPE Entry Form" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => handleListItemClick(2, "/inven-inspect")}
-          >
-            <ListItemIcon>
-              <ReportIcon/>
-            </ListItemIcon>
-            <ListItemText primary="Inspection" />
-          </ListItem>
           {/* Main Report Button */}
           <ListItem button onClick={toggleReportMenu}>
             <ListItemIcon>
@@ -123,25 +105,6 @@ function Home() {
           </Collapse>
           <ListItem
             button
-            style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(6, "/account-management")}
-          >
-            <ListItemIcon>
-              <PeopleIcon/>
-            </ListItemIcon>
-            <ListItemText primary="Account Management" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => handleListItemClick(5, "/manage-tables")}
-          >
-            <ListItemIcon>
-              <TableChartIcon/>
-            </ListItemIcon>
-            <ListItemText primary="Manage Tables" />
-          </ListItem>
-          <ListItem
-            button
             onClick={() => handleListItemClick(6, "/ppe-entry")}
           >
             <ListItemIcon>
@@ -168,7 +131,7 @@ function Home() {
         }}
       >
         <header>
-          <h1>Hello, Admin!</h1>
+          <h1>Hello, User!</h1>
           <input type="search" placeholder="Search" className="search-bar" />
         </header>
 
@@ -196,9 +159,8 @@ function Home() {
         <div className="actions-activity">
           <div className="buttons" style={{ marginTop: "20px" }}>
             <button className="add-item">+ Add Item</button>
-            <button className="parics-record">PAR/ICS Record</button>
+            <button className="request-item">Requested Item</button>
             <button className="scan-item">Scan</button>
-            <button className="inventory-item">Inventory</button>
           </div>
           <div className="recent-activity">
             <h2>Recent Activity</h2>
@@ -238,4 +200,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Home_user;

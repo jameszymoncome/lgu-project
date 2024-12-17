@@ -7,6 +7,9 @@ import Inven_Inspect from "./pages/Inven_Inspect.jsx";
 import Inventory_report1 from "./pages/InventoryReport.jsx";
 import ManageTables from "./pages/ManageTables.jsx";
 import AddAccount from "./pages/AddAccount.jsx";
+import PAR_ICS1 from "./pages/PAR_ICS1.jsx";
+import Home_encoder from "./pages/Home(encoder).jsx";
+import Home_user from "./pages/Home(user).jsx";
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
         <Route path="/inventory" element={<Inventory_report1 />} />
         <Route path="/manage-tables" element={<ManageTables />} />
         <Route path="/add-account" element={<AddAccount />} />
+        <Route path="/par-ics" element={<PAR_ICS1 />} />
+        <Route path="/home-encoder" element={<Home_encoder />} />
+        <Route path="/home-user" element={<Home_user />} />
       </Routes>
     </Router>
   );

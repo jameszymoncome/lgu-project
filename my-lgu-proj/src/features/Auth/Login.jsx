@@ -13,28 +13,41 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-  
-      const data = await response.json();
-      console.log("Response:", data);
-  
-      if (data.success) {
-        localStorage.setItem("authToken", data.token);
-        navigate("/home");
-      } else {
-        setErrorMessage(data.message);
-      }
+        const response = await fetch("http://localhost:5000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+        console.log("Response:", data);
+
+        if (data.success) {
+            localStorage.setItem("authToken", data.token);
+            localStorage.setItem("userRole", data.accessLevel); // Store user role
+            if (data.accessLevel === "Full Access"){
+              navigate("/home");
+              alert(data.accessLevel);
+            }
+            else if (data.accessLevel === "Limited Access"){
+              navigate("/home-encoder");
+            }  
+            else if (data.accessLevel === "View Only"){
+              navigate("/home-user");
+            }
+            else {
+              setErrorMessage(data.message);
+            }
+        } else {
+            setErrorMessage(data.message);
+        }
     } catch (error) {
-      console.error("Error:", error);
-      setErrorMessage("An error occurred. Please try again later.");
+        console.error("Error:", error);
+        setErrorMessage("An error occurred. Please try again later.");
     }
-  };
+};
   
 
   return (
