@@ -138,6 +138,7 @@ function InventoryReport() {
       propertyNo: "ABC123",
       unit: "Piece",
       quantity: 10,
+      department: "MPDO",
       dateAcquired: "2022-01-01",
       unitCost: 50000,
       totalCost: 500000,
@@ -147,6 +148,7 @@ function InventoryReport() {
       propertyNo: "XYZ456",
       unit: "Piece",
       quantity: 5,
+      department: "GSO",
       dateAcquired: "2021-06-15",
       unitCost: 30000,
       totalCost: 150000,
@@ -156,6 +158,7 @@ function InventoryReport() {
       propertyNo: "LMN789",
       unit: "Piece",
       quantity: 3,
+      department: "MAYOR'S OFFICE",
       dateAcquired: "2023-03-10",
       unitCost: 15000,
       totalCost: 45000,
@@ -165,6 +168,7 @@ function InventoryReport() {
       propertyNo: "DEF123",
       unit: "Unit",
       quantity: 2,
+      department: "ACCOUNTING",
       dateAcquired: "2020-12-05",
       unitCost: 25000,
       totalCost: 50000,
@@ -534,6 +538,7 @@ function InventoryReport() {
             <StyledTableDataCell isHeader={true}>Property/Inventory No.</StyledTableDataCell>
             <StyledTableDataCell isHeader={true}>Unit</StyledTableDataCell>
             <StyledTableDataCell isHeader={true}>Quantity</StyledTableDataCell>
+            <StyledTableDataCell isHeader={true}>Department</StyledTableDataCell>
             <StyledTableDataCell isHeader={true}>Date Acquired</StyledTableDataCell>
             <StyledTableDataCell isHeader={true}>Action</StyledTableDataCell>
           </TableRow>
@@ -545,6 +550,7 @@ function InventoryReport() {
               <StyledTableDataCell>{row.propertyNo}</StyledTableDataCell>
               <StyledTableDataCell>{row.unit}</StyledTableDataCell>
               <StyledTableDataCell>{row.quantity}</StyledTableDataCell>
+              <StyledTableDataCell>{row.department}</StyledTableDataCell>
               <StyledTableDataCell>{row.dateAcquired}</StyledTableDataCell>
               <StyledTableDataCell>
                 <button

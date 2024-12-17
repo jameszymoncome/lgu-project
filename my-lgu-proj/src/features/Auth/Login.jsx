@@ -11,43 +11,44 @@ function Login() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-        const response = await fetch("http://localhost:5000/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-        });
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-        const data = await response.json();
-        console.log("Response:", data);
+      const data = await response.json();
+      console.log("Response:", data);
 
-        if (data.success) {
-            localStorage.setItem("authToken", data.token);
-            localStorage.setItem("userRole", data.accessLevel); // Store user role
-            if (data.accessLevel === "Full Access"){
-              navigate("/home");
-              alert(data.accessLevel);
-            }
-            else if (data.accessLevel === "Limited Access"){
-              navigate("/home-encoder");
-            }  
-            else if (data.accessLevel === "View Only"){
-              navigate("/home-user");
-            }
-            else {
-              setErrorMessage(data.message);
-            }
-        } else {
-            setErrorMessage(data.message);
+      if (data.success) {
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("userRole", data.accessLevel); // Store user role
+        localStorage.setItem("firstName", data.firstName); // Store user's first name
+        localStorage.setItem("userId", data.userId); // Store user's ID
+
+        // Navigate based on user role
+        if (data.accessLevel === "Full Access") {
+          navigate("/home");
+          alert(`Welcome ${data.userId}!`); // Welcome message with first name
+        } else if (data.accessLevel === "Limited Access") {
+          navigate("/home-encoder");
+        } else if (data.accessLevel === "View Only") {
+          navigate("/home-user");
         }
+      } else {
+        setErrorMessage(data.message);
+      }
     } catch (error) {
-        console.error("Error:", error);
-        setErrorMessage("An error occurred. Please try again later.");
+      console.error("Error:", error);
+      setErrorMessage("An error occurred. Please try again later.");
     }
-};
+  };
+
   
 
   return (

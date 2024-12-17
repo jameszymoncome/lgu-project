@@ -105,7 +105,7 @@ function Home_user() {
           </Collapse>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/ppe-entry")}
+            onClick={() => handleListItemClick(6, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>

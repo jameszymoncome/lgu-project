@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Home.css"; // Custom styles
 import Icon from "../assets/images/sample_icon.png";
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Collapse} from "@mui/material";
@@ -38,6 +38,17 @@ function Home() {
   const toggleReportMenu = () => {
     setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
+
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    const storedFirstName = localStorage.getItem("firstName");
+    if (storedFirstName) {
+        setFirstName(storedFirstName);
+    } else {
+        navigate("/login"); // Redirect to login if no first name is found
+    }
+}, [navigate]);
 
   return (
     <div style={{ display: "flex" }}>
@@ -142,7 +153,7 @@ function Home() {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/ppe-entry")}
+            onClick={() => handleListItemClick(6, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>
@@ -168,8 +179,8 @@ function Home() {
         }}
       >
         <header>
-          <h1>Hello, Admin!</h1>
-          <input type="search" placeholder="Search" className="search-bar" />
+          <h1 style={{color: "#0F1D9F"}}>Hello, {firstName}!</h1>
+          <input type="search" placeholder="Search" className="search-bar-home" />
         </header>
 
         {/* Summary Cards */}

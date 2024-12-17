@@ -10,6 +10,8 @@ import AddAccount from "./pages/AddAccount.jsx";
 import PAR_ICS1 from "./pages/PAR_ICS1.jsx";
 import Home_encoder from "./pages/Home(encoder).jsx";
 import Home_user from "./pages/Home(user).jsx";
+import PAR_ICS2 from "./pages/PAR_ICS2.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
         <Route path="/par-ics" element={<PAR_ICS1 />} />
         <Route path="/home-encoder" element={<Home_encoder />} />
         <Route path="/home-user" element={<Home_user />} />
+        <Route path="/par-ics2" element={<PAR_ICS2 />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

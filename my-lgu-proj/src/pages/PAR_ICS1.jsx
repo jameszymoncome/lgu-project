@@ -77,6 +77,10 @@ function PAR_ICS1() {
     setReportMenuOpen((prevOpen) => !prevOpen);
   };
 
+  const handleViewClick = () => {
+    navigate("/par-ics2");
+  }
+
   const [searchTerm, setSearchTerm] = useState("");
   
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
@@ -309,7 +313,7 @@ function PAR_ICS1() {
                         cursor:"pointer", 
                         fontSize:"14px"
                       }}
-                      onClick={() => alert("View button clicked!")}
+                      onClick={handleViewClick}
                     >
                       View
                     </button>

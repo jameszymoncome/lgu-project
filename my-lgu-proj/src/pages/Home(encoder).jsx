@@ -123,7 +123,7 @@ function Home_encoder() {
           </Collapse>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/ppe-entry")}
+            onClick={() => handleListItemClick(6, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>

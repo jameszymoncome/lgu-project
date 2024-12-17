@@ -170,7 +170,7 @@ const Inven_Inspect = () => {
         <header>
           <div className="heads">
             <h1 style={{ color: "#0F1D9F" }}>Inventory Inspection</h1>
-            <button className="viewBTN">View Reports</button>
+            <button style={{ color: "#0F1D9F" }} className="viewBTN">View Records</button>
           </div>
         </header>
 
