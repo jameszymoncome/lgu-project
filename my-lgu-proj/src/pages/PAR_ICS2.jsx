@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import "./PAR_ICS2.css";
 import {
   Drawer,
@@ -31,10 +31,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import PeopleIcon from "@mui/icons-material/People";
 import PrintIcon from "@mui/icons-material/Print";
 import { styled } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-
+import axios from "axios";
 
 
 
@@ -116,6 +116,8 @@ const StyledTableContainer = styled(TableContainer)({
 
 
 function PAR_ICS2() {
+  const location = useLocation();
+  const { itemId } = location.state || {};
 
   const navigate = useNavigate();
   
@@ -133,30 +135,20 @@ function PAR_ICS2() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOption1, setSelectedOption1] = useState("");
+  const [tableData, setTableData] = useState([]);
 
+  useEffect(() => {
+    getItemID();
+  }, [])
 
-  // Sample data for the table
-  const tableData = [
-    {
-      quantity: 10,
-      unit: "Pieces",
-      description: "Laptop",
-      propertyNo: "ABC123",
-      dateAcquired: "2022-01-01",
-      unitCost: 50000,
-      totalCost: 500000,
-    },
-    {
-      quantity: 5,
-      unit: "Pieces",
-      description: "Desktop Computer",
-      propertyNo: "XYZ456",
-      dateAcquired: "2021-06-15",
-      unitCost: 30000,
-      totalCost: 150000,
-    },
-  ];
-
+  const getItemID = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/getItem/${itemId}`);
+      setTableData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const tableRef = useRef();
 
@@ -456,50 +448,33 @@ function PAR_ICS2() {
 
         {/* Table Data */}
         <StyledTableContainer ref={tableRef} component={Paper}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <StyledTableCell isHeader={true}>Quantity</StyledTableCell>
-        <StyledTableCell isHeader={true}>Unit</StyledTableCell>
-        <StyledTableCell isHeader={true}>Description</StyledTableCell>
-        <StyledTableCell isHeader={true}>Property No.</StyledTableCell>
-        <StyledTableCell isHeader={true}>Date Acquired</StyledTableCell>
-        <StyledTableCell isHeader={true}>Unit Cost</StyledTableCell>
-        <StyledTableCell isHeader={true}>Total Cost</StyledTableCell>
-        <StyledTableCell isHeader={true}>Action</StyledTableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {tableData.map((row, index) => (
-        <TableRow key={index}>
-          <StyledTableCell>{row.quantity}</StyledTableCell>
-          <StyledTableCell>{row.unit}</StyledTableCell>
-          <StyledTableCell>{row.description}</StyledTableCell>
-          <StyledTableCell>{row.propertyNo}</StyledTableCell>
-          <StyledTableCell>{row.dateAcquired}</StyledTableCell>
-          <StyledTableCell>{row.unitCost}</StyledTableCell>
-          <StyledTableCell>{row.totalCost}</StyledTableCell>
-          <StyledTableCell>
-            <button
-              style={{
-                backgroundColor: "#0F1D9F",
-                color: "white",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "14px",
-              }}
-              onClick={() => alert("View button clicked!")}
-            >
-              View
-            </button>
-          </StyledTableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</StyledTableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell isHeader={true}>Quantity</StyledTableCell>
+                <StyledTableCell isHeader={true}>Unit</StyledTableCell>
+                <StyledTableCell isHeader={true}>Description</StyledTableCell>
+                <StyledTableCell isHeader={true}>Property No.</StyledTableCell>
+                <StyledTableCell isHeader={true}>Date Acquired</StyledTableCell>
+                <StyledTableCell isHeader={true}>Unit Cost</StyledTableCell>
+                <StyledTableCell isHeader={true}>Total Cost</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tableData.map((row, index) => (
+                <TableRow key={index}>
+                  <StyledTableCell>{row.quantity}</StyledTableCell>
+                  <StyledTableCell>{row.unit}</StyledTableCell>
+                  <StyledTableCell>{row.description}</StyledTableCell>
+                  <StyledTableCell>{row.procsid_range}</StyledTableCell> {/* Assuming you want to show 'procsid_range' */}
+                  <StyledTableCell>{row.dateAcquired}</StyledTableCell> {/* Assuming you have a dateAcquired column */}
+                  <StyledTableCell>{row.unitCost}</StyledTableCell>
+                  <StyledTableCell>{row.totalCost}</StyledTableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </StyledTableContainer>
 
 
       </div>

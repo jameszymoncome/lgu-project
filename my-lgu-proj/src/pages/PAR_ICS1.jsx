@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PAR_ICS1.css";
 import {
   Drawer,
@@ -39,6 +39,7 @@ import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import axios from "axios";
 
 const drawerWidth = 240;
 
@@ -67,6 +68,24 @@ function PAR_ICS1() {
   
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isReportMenuOpen, setReportMenuOpen] = useState(true);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, [])
+
+  const getData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/items");
+      setItems(response.data); // Update state with fetched data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const handleButtonClick = (id) => {
+    navigate("/par-ics2", { state: { itemId: id } });
+  };
   
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index);
@@ -76,10 +95,6 @@ function PAR_ICS1() {
   const toggleReportMenu = () => {
     setReportMenuOpen((prevOpen) => !prevOpen);
   };
-
-  const handleViewClick = () => {
-    navigate("/par-ics2");
-  }
 
   const [searchTerm, setSearchTerm] = useState("");
   
@@ -233,7 +248,10 @@ function PAR_ICS1() {
             <Select value={selectedOption2} onChange={handleDropdownChange2} label="Department">
               <MenuItem value="">All</MenuItem>
               <MenuItem value="optionC">General Service Office (GSO)</MenuItem>
-              <MenuItem value="optionD">MDRRMO</MenuItem>
+              <MenuItem value="optionD">MPDO</MenuItem>
+              <MenuItem value="optionE">MAYOR'S OFFICE</MenuItem>
+              <MenuItem value="optionF">ENGINEERING</MenuItem>
+              <MenuItem value="optionG">ACCOUNTING</MenuItem>
             </Select>
           </FormControl>
 
@@ -286,7 +304,7 @@ function PAR_ICS1() {
             {/* Table Head */}
             <TableHead>
               <TableRow>
-                {["ID No.", "Entity No.", "Fund Cluster", "Date", "Status", "Action"].map((header) =>
+                {["Form ID", "Entity Name", "Fund Cluster", "Date", "Action"].map((header) =>
                   (<StyledTableDataCell key={header} isHeader>{header}</StyledTableDataCell>)
                 )}
               </TableRow>
@@ -294,15 +312,14 @@ function PAR_ICS1() {
 
             {/* Table Body with Sample Data */}
             <TableBody>
-              {[{ idNo: '19128', entityNo:'987678', fundCluster:'Angeolo', date:'12/09/01', status:'Pending' }].map((row) => (
-                // Render each row dynamically
-                (<TableRow key={row.idNo}>
-                  {Object.values(row).map((value) =>
-                    (<StyledTableDataCell key={value}>{value}</StyledTableDataCell>)
-                  )}
-                  {/* Action Button */}
+              {items.map((row) => (
+                <TableRow key={row.item_id}>
+                <StyledTableDataCell>{row.form_id}</StyledTableDataCell>
+                <StyledTableDataCell>{row.entityName}</StyledTableDataCell>
+                <StyledTableDataCell>{row.fundCluster}</StyledTableDataCell>
+                <StyledTableDataCell>{row.date}</StyledTableDataCell>
+
                   <StyledTableDataCell>
-                    {/* View Button with Alert for demonstration */}
                     <button
                       style={{
                         backgroundColor:"#0F1D9F", 
@@ -313,17 +330,15 @@ function PAR_ICS1() {
                         cursor:"pointer", 
                         fontSize:"14px"
                       }}
-                      onClick={handleViewClick}
+                      onClick={() => handleButtonClick(row.item_id)}
                     >
                       View
                     </button>
-                  </StyledTableDataCell> 
-                </TableRow>)
+                  </StyledTableDataCell>
+
+                </TableRow>
               ))}
-              
-              {/* Additional rows can be added here as needed */}
-              
-             </TableBody> 
+            </TableBody> 
            </Table> 
          </StyledTableContainer> 
        </div> 

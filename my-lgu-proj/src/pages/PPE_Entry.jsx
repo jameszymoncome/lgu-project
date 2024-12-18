@@ -17,6 +17,10 @@ import {
   TableRow,
   Paper,
   Collapse,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -52,6 +56,7 @@ function PPE_Entry() {
   const [formData, setFormData] = useState({
     entityName: "",
     fundCluster: "",
+    department: "",
     description: "",
     dateAcquired: "",
     quantity: "",
@@ -59,6 +64,14 @@ function PPE_Entry() {
     unitCost: "",
     totalCost: "",
   });
+
+  const departments = [
+    "GSO",
+    "MAYOR'S OFFICE",
+    "ACCOUNTING",
+    "ENGINEERING",
+    "MPDO",
+  ];
 
   // Handle input changes
   const handleChange = (e) => {
@@ -75,45 +88,69 @@ function PPE_Entry() {
     }));
   };
 
-   // Add an item to the table
-   const handleAddItem = () => {
+  // State to control whether fields are disabled
+  const [fieldsDisabled, setFieldsDisabled] = useState(false);
+
+  // Add an item to the table
+  const handleAddItem = () => {
     if (Object.values(formData).some((field) => !field)) {
-      alert("Please fill out all fields.");
-      return;
+        alert("Please fill out all fields.");
+        return;
     }
+
+    // Add the current form data to entries
     setEntries([...entries, formData]);
-    handleClear(); // Clear the form after adding
-  };
 
-  // Clear form inputs
-  const handleClear = () => {
-    setFormData({
-      entityName: "",
-      fundCluster: "",
-      description: "",
-      dateAcquired: "",
-      quantity: "",
-      unit: "",
-      unitCost: "",
-      totalCost: "",
-    });
-  };
+    // Clear the form after adding
+    handleClear(); 
 
-  const handleSave = async () => {
+    setFieldsDisabled(true);
+};
+
+// Clear form inputs except for entityName, fundCluster, and department
+const handleClear = () => {
+    setFormData((prevData) => ({
+        ...prevData,
+        description: "",
+        dateAcquired: "",
+        quantity: "",
+        unit: "",
+        unitCost: "",
+        totalCost: "", // Reset total cost
+    }));
+};
+
+const handleClearAll = () => {
+  setFormData({
+    entityName: "",
+    fundCluster: "",
+    department: "",
+    description: "",
+    dateAcquired: "",
+    quantity: "",
+    unit: "",
+    unitCost: "",
+    totalCost: "",
+  });
+};
+
+const handleSave = async () => {
     if (entries.length === 0) {
-      alert("No entries to save.");
-      return;
+        alert("No entries to save.");
+        return;
     }
-  
+
     try {
-      const response = await axios.post("http://localhost:5000/ppe-entries", entries);
-      alert(response.data.message); // Show success message
-      setEntries([]); // Clear entries after saving
+        const response = await axios.post("http://localhost:5000/ppe-entries", entries);
+        alert(response.data.message); // Show success message
+        setEntries([]); // Clear entries after saving
+        setFieldsDisabled(false);
+        handleClearAll(); // Clear form inputs
     } catch (error) {
-      console.error("Error saving entries:", error.response.data); // Log detailed error response
-      alert("There was an error saving the entries.");
+        console.error("Error saving entries:", error.response.data); // Log detailed error response
+        alert("There was an error saving the entries.");
     }
-  };
+};
   
 
   return (
@@ -218,7 +255,7 @@ function PPE_Entry() {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/ppe-entry")}
+            onClick={() => handleListItemClick(6, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>
@@ -256,6 +293,7 @@ function PPE_Entry() {
               value={formData.entityName}
               onChange={handleChange}
               required
+              disabled={fieldsDisabled}
             />
             <TextField
               label="Fund Cluster"
@@ -263,7 +301,22 @@ function PPE_Entry() {
               value={formData.fundCluster}
               onChange={handleChange}
               required
+              disabled={fieldsDisabled}
             />
+            <FormControl style={{ flex: "1 1 45%" }} disabled={fieldsDisabled}>
+            <InputLabel>Department</InputLabel>
+            <Select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+            >
+              {departments.map((dept) => (
+                <MenuItem key={dept} value={dept}>
+                  {dept}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
             <TextField
               label="Description"
               name="description"

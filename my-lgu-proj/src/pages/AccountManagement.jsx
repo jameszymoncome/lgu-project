@@ -198,7 +198,7 @@ function AccountManagement() {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/ppe-entry")}
+            onClick={() => handleListItemClick(6, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>
@@ -262,8 +262,8 @@ function AccountManagement() {
             </TableHead>
             <TableBody>
               {filteredAccounts.map((account) => (
-                <TableRow key={account.id}>
-                  <TableCell>{account.id}</TableCell>
+                <TableRow key={account.user_id}>
+                  <TableCell>{account.user_id}</TableCell>
                   <TableCell>
                     {`${account.lastname}, ${account.firstname} ${account.middlename || ""}`}
                   </TableCell>

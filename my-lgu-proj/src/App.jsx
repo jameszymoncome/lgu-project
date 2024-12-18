@@ -13,6 +13,7 @@ import Home_user from "./pages/Home(user).jsx";
 import PAR_ICS2 from "./pages/PAR_ICS2.jsx";
 import Profile from "./pages/Profile.jsx";
 import Item_history from "./pages/Item_history.jsx";
+import Inspection_Scanner from "./pages/Inspection_Scanner.jsx";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/par-ics2" element={<PAR_ICS2 />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/item-history" element={<Item_history />} />
+        <Route path="/inspec-scanner" element={<Inspection_Scanner />} />
       </Routes>
     </Router>
   );

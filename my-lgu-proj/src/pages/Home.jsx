@@ -50,6 +50,22 @@ function Home() {
     }
 }, [navigate]);
 
+  const handleInvClick = () => {
+    navigate("/inventory")
+  }
+
+  const handleParIcsClick = () => {
+    navigate("/par-ics")
+  }
+
+  const handleScanClick = () => {
+    navigate("/home")
+  }
+
+  const handleAddItemClick = () => {
+    navigate("/ppe-entry")
+  }
+
   return (
     <div style={{ display: "flex" }}>
       {/* Header */}
@@ -206,10 +222,10 @@ function Home() {
         {/* Buttons and Recent Activity */}
         <div className="actions-activity">
           <div className="buttons" style={{ marginTop: "20px" }}>
-            <button className="add-item">+ Add Item</button>
-            <button className="parics-record">PAR/ICS Record</button>
-            <button className="scan-item">Scan</button>
-            <button className="inventory-item">Inventory</button>
+            <button className="add-item" onClick={handleAddItemClick}>+ Add Item</button>
+            <button className="parics-record" onClick={handleParIcsClick}>PAR/ICS Record</button>
+            <button className="scan-item" onClick={handleScanClick}>Scan</button>
+            <button className="inventory-item" onClick={handleInvClick}>Inventory</button>
           </div>
           <div className="recent-activity">
             <h2>Recent Activity</h2>

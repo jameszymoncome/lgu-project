@@ -3,6 +3,7 @@ import { TextField, Button, Checkbox, FormControlLabel, Typography, Link } from 
 import "./Login.css"; // Custom CSS for additional styles
 import Logo from "/ppe_logo.png";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 function Login() {
   const navigate = useNavigate();
@@ -14,41 +15,64 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-
+  
       const data = await response.json();
       console.log("Response:", data);
-
+  
       if (data.success) {
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("userRole", data.accessLevel); // Store user role
         localStorage.setItem("firstName", data.firstName); // Store user's first name
         localStorage.setItem("userId", data.userId); // Store user's ID
-
-        // Navigate based on user role
-        if (data.accessLevel === "Full Access") {
-          navigate("/home");
-          alert(`Welcome ${data.userId}!`); // Welcome message with first name
-        } else if (data.accessLevel === "Limited Access") {
-          navigate("/home-encoder");
-        } else if (data.accessLevel === "View Only") {
-          navigate("/home-user");
-        }
+  
+        // Show success alert
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          text: `Welcome, ${data.firstName}!`,
+          confirmButtonText: "Proceed",
+        }).then(() => {
+          // Navigate based on user role after the alert is closed
+          if (data.accessLevel === "Full Access") {
+            navigate("/home");
+          } else if (data.accessLevel === "Limited Access") {
+            navigate("/home-encoder");
+          } else if (data.accessLevel === "View Only") {
+            navigate("/home-user");
+          }
+        });
       } else {
         setErrorMessage(data.message);
+  
+        // Show error alert
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: data.message,
+          confirmButtonText: "Try Again",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("An error occurred. Please try again later.");
+  
+      // Show error alert for unexpected issues
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An unexpected error occurred. Please try again later.",
+        confirmButtonText: "Okay",
+      });
     }
   };
-
+  
   
 
   return (

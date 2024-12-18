@@ -25,9 +25,9 @@ const Inven_Inspect = () => {
 
   const options = ["Option 1", "Option 2", "Option 3"];
   const data = [
-    { department: "HR", date: "2024-12-01", status: "Completed" },
-    { department: "Finance", date: "2024-12-02", status: "In Progress" },
-    { department: "IT", date: "2024-12-03", status: "Completed" },
+    { department: "ACCOUNTING", date: "2024-12-01", status: "Completed" },
+    { department: "MPDO", date: "2024-12-02", status: "In Progress" },
+    { department: "MAYOR'S OFFICE", date: "2024-12-03", status: "Completed" },
   ];
 
   const handleListItemClick = (index, path) => {
@@ -42,6 +42,10 @@ const Inven_Inspect = () => {
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
+
+  const handleViewRecord = () => {
+    navigate("/inspec-scanner")
+  }
 
   return (
     <div style={{ display: "flex" }}>
@@ -145,7 +149,7 @@ const Inven_Inspect = () => {
           <ListItem
             button
             style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }}
-            onClick={() => handleListItemClick(6, "/ppe-entry")}
+            onClick={() => handleListItemClick(6, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon style={{ color: selectedIndex === 6 ? "#0F1D9F" : "inherit" }} />
@@ -170,7 +174,7 @@ const Inven_Inspect = () => {
         <header>
           <div className="heads">
             <h1 style={{ color: "#0F1D9F" }}>Inventory Inspection</h1>
-            <button style={{ color: "#0F1D9F" }} className="viewBTN">View Records</button>
+            <button style={{ color: "#0F1D9F" }} className="viewBTN" onClick={handleViewRecord}>View Records</button>
           </div>
         </header>
 
