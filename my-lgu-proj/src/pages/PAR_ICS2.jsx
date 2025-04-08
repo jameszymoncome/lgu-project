@@ -466,7 +466,7 @@ function PAR_ICS2() {
                   <StyledTableCell>{row.quantity}</StyledTableCell>
                   <StyledTableCell>{row.unit}</StyledTableCell>
                   <StyledTableCell>{row.description}</StyledTableCell>
-                  <StyledTableCell>{row.procsid_range}</StyledTableCell> {/* Assuming you want to show 'procsid_range' */}
+                  <StyledTableCell>{row.procsid}</StyledTableCell> {/* Assuming you want to show 'procsid_range' */}
                   <StyledTableCell>{row.dateAcquired}</StyledTableCell> {/* Assuming you have a dateAcquired column */}
                   <StyledTableCell>{row.unitCost}</StyledTableCell>
                   <StyledTableCell>{row.totalCost}</StyledTableCell>

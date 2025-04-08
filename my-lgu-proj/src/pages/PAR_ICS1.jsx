@@ -304,7 +304,7 @@ function PAR_ICS1() {
             {/* Table Head */}
             <TableHead>
               <TableRow>
-                {["Form ID", "Entity Name", "Fund Cluster", "Date", "Action"].map((header) =>
+                {["Type", "Form ID", "Entity Name", "Fund Cluster", "Date", "Action"].map((header) =>
                   (<StyledTableDataCell key={header} isHeader>{header}</StyledTableDataCell>)
                 )}
               </TableRow>
@@ -314,6 +314,7 @@ function PAR_ICS1() {
             <TableBody>
               {items.map((row) => (
                 <TableRow key={row.item_id}>
+                <StyledTableDataCell>{(row.form_id[0]) === 'i' ? 'ICS' : 'PAR'}</StyledTableDataCell>
                 <StyledTableDataCell>{row.form_id}</StyledTableDataCell>
                 <StyledTableDataCell>{row.entityName}</StyledTableDataCell>
                 <StyledTableDataCell>{row.fundCluster}</StyledTableDataCell>
@@ -330,7 +331,7 @@ function PAR_ICS1() {
                         cursor:"pointer", 
                         fontSize:"14px"
                       }}
-                      onClick={() => handleButtonClick(row.item_id)}
+                      onClick={() => handleButtonClick(row.form_id)}
                     >
                       View
                     </button>
