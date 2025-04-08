@@ -265,7 +265,7 @@ function PAR_ICS2() {
                       <td>${row.quantity}</td>
                       <td>${row.unit}</td>
                       <td>${row.description}</td>
-                      <td>${row.propertyNo}</td>
+                      <td>${row.procsid}</td>
                       <td>${row.dateAcquired}</td>
                       <td>${row.unitCost}</td>
                       <td>${row.totalCost}</td>
