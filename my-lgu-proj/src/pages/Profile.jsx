@@ -278,7 +278,7 @@ function Profile() {
           {/* Role Selection */}
           <FormControl style={{ flex: "1 1 45%" }}>
             <InputLabel>Role</InputLabel>
-            <Select name="role" value={profile.role} onChange={handleChange} disabled={!isEditing}>
+            <Select name="role" value={profile.role} onChange={handleChange} disabled={!isEditing|isEditing}>
               {roles.map((role) => (
                 <MenuItem key={role} value={role}>{role}</MenuItem>
               ))}
@@ -288,7 +288,7 @@ function Profile() {
           {/* Department Selection */}
           <FormControl style={{ flex: "1 1 45%" }}>
             <InputLabel>Department</InputLabel>
-            <Select name="department" value={profile.department} onChange={handleChange} disabled={!isEditing}>
+            <Select name="department" value={profile.department} onChange={handleChange} disabled={!isEditing|isEditing}>
               {departments.map((dept) => (
                 <MenuItem key={dept} value={dept}>{dept}</MenuItem>
               ))}
