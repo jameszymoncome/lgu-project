@@ -58,6 +58,7 @@ function PPE_Entry() {
     fundCluster: "",
     department: "",
     description: "",
+    receiver: "",
     dateAcquired: "",
     quantity: "",
     unit: "",
@@ -112,7 +113,6 @@ const handleClear = () => {
     setFormData((prevData) => ({
         ...prevData,
         description: "",
-        dateAcquired: "",
         quantity: "",
         unit: "",
         unitCost: "",
@@ -126,6 +126,7 @@ const handleClearAll = () => {
     fundCluster: "",
     department: "",
     description: "",
+    receiver: "",
     dateAcquired: "",
     quantity: "",
     unit: "",
@@ -326,6 +327,15 @@ const handleSave = async () => {
               fullWidth
             />
             <TextField
+              label="Receiver Name"
+              name="receiver"
+              value={formData.receiver}
+              onChange={handleChange}
+              required
+              sx={{ width: '25rem' }}
+              disabled = {fieldsDisabled}
+            />
+            <TextField
               type="date"
               label="Date Acquired"
               name="dateAcquired"
@@ -333,6 +343,7 @@ const handleSave = async () => {
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               required
+              disabled = {fieldsDisabled}
             />
             <TextField
               type="number"
