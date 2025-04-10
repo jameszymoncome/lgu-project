@@ -371,16 +371,23 @@ const handleSave = async () => {
                 disabled={fieldsDisabled}
                 options={receiverOptions}
                 getOptionLabel={(option) => option?.full_name || ""}
-                value={formData.receiver}
-                onInputChange={(event, value) => fetchReceivers(value)}
+                value={
+                  receiverOptions.find((option) => option.full_name === formData.receiver) || null
+                }
+                onInputChange={(event, value) => {
+                  if (value !== formData.receiver) {
+                    fetchReceivers(value);
+                  }
+                }}
                 onChange={(event, value) => {
                   setFormData((prevData) => ({
                     ...prevData,
-                    receiver: value,
-                    department: value ? value.department : "",
+                    receiver: value ? value.full_name : "", // Store only the receiver's name
+                    department: value ? value.department : "", // Update department if needed
                   }));
                   setSelectedDepartment(value ? value.department : "");
                 }}
+                isOptionEqualToValue={(option, value) => option.full_name === value.full_name}
                 renderInput={(params) => (
                   <TextField
                     {...params}
