@@ -11,6 +11,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PeopleIcon from "@mui/icons-material/People";
 import { useNavigate } from "react-router-dom";
+import {Html5Qrcode, Html5QrcodeScanner} from 'html5-qrcode';
 
 import {
     Table,
@@ -41,6 +42,14 @@ const Inspection_Scanner = () => {
     const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
 
   const navigate = useNavigate();
+
+  // cons scanner = new Html5QrcodeScanner('reader', {
+  //   qrbox: { width: 250, height: 250 },
+  //   fps: 5,
+
+  // });
+ 
+  // scanner.render(success, error);
 
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index);

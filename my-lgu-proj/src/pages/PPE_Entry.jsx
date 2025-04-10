@@ -34,6 +34,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { useNavigate } from "react-router-dom";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import axios from "axios"; // Import Axios for API calls
+import { Autocomplete} from "@mui/material"; // Import Autocomplete
 
 const drawerWidth = 240;
 
@@ -42,6 +43,29 @@ function PPE_Entry() {
 
   const [selectedIndex, setSelectedIndex] = useState(0); // Track selected menu item
   const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
+
+  const [receiverOptions, setReceiverOptions] = useState([]); // State to hold receiver options
+
+  const [selectedDepartment, setSelectedDepartment] = useState(""); // Track selected department
+  // Fetch receiver options when the field is clicked
+  const fetchReceivers = async (searchQuery = "") => {
+    console.log("Fetching receivers with:", { searchQuery, selectedDepartment });
+  
+    try {
+      const response = await axios.get("http://localhost:5000/users", {
+        params: {
+          role: "ENCODER,USER(VIEWING ONLY)",
+          search: searchQuery,
+          department: selectedDepartment, // Filter by selected department
+        },
+      });
+      console.log("Fetched receivers:", response.data);
+      setReceiverOptions(response.data);
+    } catch (error) {
+      console.error("Error fetching receivers:", error);
+      alert("Failed to fetch receiver options.");
+    }
+  };
 
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index); // Update selected menu item
@@ -147,6 +171,12 @@ const handleSave = async () => {
         setEntries([]); // Clear entries after saving
         setFieldsDisabled(false);
         handleClearAll(); // Clear form inputs
+
+        // Explicitly reset the receiver field
+        setFormData((prevData) => ({
+          ...prevData,
+          receiver: "", // Reset receiver field
+        }));
     } catch (error) {
         console.error("Error saving entries:", error.response.data); // Log detailed error response
         alert("There was an error saving the entries.");
@@ -304,20 +334,30 @@ const handleSave = async () => {
               required
               disabled={fieldsDisabled}
             />
-            <FormControl style={{ flex: "1 1 45%" }} disabled={fieldsDisabled}>
-            <InputLabel>Department</InputLabel>
-            <Select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-            >
-              {departments.map((dept) => (
-                <MenuItem key={dept} value={dept}>
-                  {dept}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            <FormControl style={{ flex: "1 1 45%" }} disabled={fieldsDisabled | !fieldsDisabled}>
+              <InputLabel>Department</InputLabel>
+              <Select
+                name="department"
+                value={formData.department}
+                onChange={(event) => {
+                  const department = event.target.value;
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    department, // Update department in formData
+                    receiver: "", // Clear receiver when department changes
+                  }));
+                  setSelectedDepartment(department); // Update selected department
+                  fetchReceivers(); // Fetch users for the selected department
+                }}
+                disabled={!fieldsDisabled | fieldsDisabled}
+              >
+                {departments.map((dept) => (
+                  <MenuItem key={dept} value={dept}>
+                    {dept}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               label="Description"
               name="description"
@@ -326,15 +366,32 @@ const handleSave = async () => {
               required
               fullWidth
             />
-            <TextField
-              label="Receiver Name"
-              name="receiver"
-              value={formData.receiver}
-              onChange={handleChange}
-              required
-              sx={{ width: '25rem' }}
-              disabled = {fieldsDisabled}
-            />
+            <FormControl sx={{ width: '25rem' }} disabled={fieldsDisabled} name="receiver">
+              <Autocomplete
+                disabled={fieldsDisabled}
+                options={receiverOptions}
+                getOptionLabel={(option) => option?.full_name || ""}
+                value={formData.receiver}
+                onInputChange={(event, value) => fetchReceivers(value)}
+                onChange={(event, value) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    receiver: value,
+                    department: value ? value.department : "",
+                  }));
+                  setSelectedDepartment(value ? value.department : "");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Receiver Name"
+                    name="receiver"
+                    required
+                    disabled={fieldsDisabled}
+                  />
+                )}
+              />
+            </FormControl>
             <TextField
               type="date"
               label="Date Acquired"
