@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Scans from '../assets/images/scans.png';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Collapse } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
@@ -11,7 +11,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PeopleIcon from "@mui/icons-material/People";
 import { useNavigate } from "react-router-dom";
-import {Html5Qrcode, Html5QrcodeScanner} from 'html5-qrcode';
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 import {
     Table,
@@ -31,6 +31,35 @@ const Inspection_Scanner = () => {
   const [proInvenID, setproInvenID] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const options = ['Broken', 'Irreparable', 'Good'];
+  const  [scanResult, setScanResult] = useState(null);
+  const [qrScanned, setQrScanned] = useState(false); // Track if QR code has been scanned
+
+  const startScanner = () => {
+    console.log("Scanner started"); // Log when the scanner starts
+    const readerElement = document.getElementById("reader");
+    const imgElement = document.getElementById("scanImage");
+  
+    imgElement.style.display = "none"; // Hide the image
+    readerElement.style.display = "block"; // Show the scanner
+  
+    const scanner = new Html5QrcodeScanner("reader", {
+      qrbox: { width: 250, height: 250 },
+      fps: 5,
+    });
+  
+    scanner.render(
+      (result) => {
+        setScanResult(result); // Update the scan result
+        scanner.clear(); // Stop the scanner after a successful scan
+        readerElement.style.display = "none"; // Hide the scanner
+        imgElement.style.display = "block"; // Show the image again
+      },
+      (error) => {
+        console.warn(error); // Log errors for debugging
+      }
+    );
+    setQrScanned(true); // Set the flag to true when the scanner is started
+  };
 
   const data = [
     { Description: "MAYOR'S OFFICE", PropertyInventory: "2024-12-01", PARICS: "Completed", ExItem: "2", ItemSca: "2", ItemRem: "2", stats: "Good" },
@@ -42,14 +71,6 @@ const Inspection_Scanner = () => {
     const [isReportMenuOpen, setReportMenuOpen] = useState(false); // Track sub-menu visibility
 
   const navigate = useNavigate();
-
-  // cons scanner = new Html5QrcodeScanner('reader', {
-  //   qrbox: { width: 250, height: 250 },
-  //   fps: 5,
-
-  // });
- 
-  // scanner.render(success, error);
 
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index);
@@ -194,7 +215,23 @@ const Inspection_Scanner = () => {
               <div style={{display: 'flex', flexDirection: 'row'}}>
                 <div style={{display: 'flex', flexDirection: 'column', alignItems: "center"}}>
                   <h1 style={{color: "#0F1D9F"}}>Inventory Inspection</h1>
-                  <img src={Scans} alt="Asset Icon"/>
+                  {/* <img src={Scans} alt="Asset Icon"/> */}
+                  <button
+                    onClick={() => startScanner()}
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img
+                      id="scanImage"
+                      src={Scans}
+                      alt="Asset Icon"
+                      style={{ width: "150px", height: "150px" }}
+                    />
+                  </button>
+                  <div id="reader" style={{ display: "none", width: "300px", height: "300px" }}></div>
                 </div>
                 <div style={{marginTop: 50}}>
                   <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
@@ -205,8 +242,9 @@ const Inspection_Scanner = () => {
                   <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
                     <h4 style={{color: "#0F1D9F", margin: 0}}>Property/Inventory Number</h4>
                     <input
+                      disabled= {qrScanned} // Disable input if QR code is scanned
                       type="text"
-                      value={proInvenID}
+                      value={scanResult} //proInvenID
                       onChange={handleChange}
                       placeholder=""
                       style={{
