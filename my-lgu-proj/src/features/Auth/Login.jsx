@@ -35,14 +35,20 @@ function Login() {
         // Show success alert
         Swal.fire({
           icon: "success",
-          title: "Login Successful",
-          text: `Welcome, ${data.firstName}!`,
-          confirmButtonText: "Proceed",
+          title: "Welcome Back!",
+          text: `Hello, ${data.firstName}! \n Your role is ${data.accessLevel}!`,
+          confirmButtonText: "Continue",
+          background: "#f9f9f9", // Light background
+          color: "#333", // Dark text color for contrast
+          confirmButtonColor: "#0F1D9F", // Button color matching your theme
+          customClass: {
+            popup: "minimal-popup", // Add a custom class for further styling
+          },
         }).then(() => {
           // Navigate based on user role after the alert is closed
-          if (data.accessLevel === "Full Access") {
+          if (data.accessLevel === "ADMIN") {
             navigate("/home");
-          } else if (data.accessLevel === "Limited Access") {
+          } else if (data.accessLevel === "ENCODER") {
             navigate("/home-encoder");
           } else if (data.accessLevel === "View Only") {
             navigate("/home-user");
@@ -54,9 +60,15 @@ function Login() {
         // Show error alert
         Swal.fire({
           icon: "error",
-          title: "Login Failed",
-          text: data.message,
-          confirmButtonText: "Try Again",
+          title: "Oops!",
+          text: data.message || "Something went wrong. Please try again.",
+          confirmButtonText: "Retry",
+          background: "#fff5f5", // Light red background for error
+          color: "#d32f2f", // Red text color
+          confirmButtonColor: "#d32f2f", // Button color matching the error theme
+          customClass: {
+            popup: "minimal-popup", // Add a custom class for further styling
+          },
         });
       }
     } catch (error) {
@@ -128,7 +140,11 @@ function Login() {
               control={<Checkbox style={{ color: "#0F1D9F" }} />}
               label="Remember me"
             />
-            <Link href="#" className="forgot-password">
+            <Link
+              href="#"
+              className="forgot-password"
+              onClick={() => navigate("/forgot-password")}
+            >
               Forgot password?
             </Link>
           </div>

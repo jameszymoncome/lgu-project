@@ -83,4 +83,22 @@
   .forgot-password:hover {
     text-decoration: underline;
   }
+
+  .minimal-popup {
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  .swal2-title {
+    font-family: "Arial", sans-serif; /* Clean font */
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .swal2-confirm {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px; /* Rounded button */
+  }
   

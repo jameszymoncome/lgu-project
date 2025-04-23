@@ -33,6 +33,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { styled } from "@mui/system";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 
 const drawerWidth = 240;
@@ -120,6 +121,34 @@ function InventoryReport() {
   const handleListItemClick = (index, path) => {
     setSelectedIndex(index); // Update selected menu item
     navigate(path); // Navigate to the selected route
+  };
+
+  const handleLogout = (index, path) => {
+    setSelectedIndex(index); // Update the selected menu item
+    Swal.fire({
+      icon: "question",
+      title: "Are you sure?",
+      text: "Do you really want to log out?",
+      showCancelButton: true, // Show the "No" button
+      confirmButtonText: "Yes, Logout",
+      cancelButtonText: "No, Stay",
+      background: "#f9f9f9", // Light background
+      color: "#333", // Dark text color for contrast
+      confirmButtonColor: "#d33", // Red color for "Yes" button
+      cancelButtonColor: "#0F1D9F", // Blue color for "No" button
+      customClass: {
+        popup: "minimal-popup", // Add a custom class for further styling
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform logout logic
+        localStorage.clear(); // Clear user data
+        navigate(path); // Redirect to login page
+      } else {
+        // Optional: Handle "No" button click (if needed)
+        console.log("User chose to stay logged in.");
+      }
+    });
   };
 
   const toggleReportMenu = () => {
@@ -446,7 +475,7 @@ function InventoryReport() {
           </ListItem>
           <ListItem 
             button
-            onClick={() => handleListItemClick(7, "/")}>
+            onClick={() => handleLogout(7, "/")}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>

@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const drawerWidth = 240;
 
@@ -35,16 +36,47 @@ function Home() {
     navigate(path); // Navigate to the selected route
   };
 
+  const handleLogout = (index, path) => {
+    setSelectedIndex(index); // Update the selected menu item
+    Swal.fire({
+      icon: "question",
+      title: "Are you sure?",
+      text: "Do you really want to log out?",
+      showCancelButton: true, // Show the "No" button
+      confirmButtonText: "Yes, Logout",
+      cancelButtonText: "No, Stay",
+      background: "#f9f9f9", // Light background
+      color: "#333", // Dark text color for contrast
+      confirmButtonColor: "#d33", // Red color for "Yes" button
+      cancelButtonColor: "#0F1D9F", // Blue color for "No" button
+      customClass: {
+        popup: "minimal-popup", // Add a custom class for further styling
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform logout logic
+        localStorage.clear(); // Clear user data
+        navigate(path); // Redirect to login page
+      } else {
+        // Optional: Handle "No" button click (if needed)
+        console.log("User chose to stay logged in.");
+      }
+    });
+  };
+
   const toggleReportMenu = () => {
     setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
 
   const [firstName, setFirstName] = useState("");
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
     const storedFirstName = localStorage.getItem("firstName");
+    const storeduserRole = localStorage.getItem("userRole");
     if (storedFirstName) {
         setFirstName(storedFirstName);
+        setUserRole(storeduserRole);
     } else {
         navigate("/login"); // Redirect to login if no first name is found
     }
@@ -178,7 +210,7 @@ function Home() {
           </ListItem>
           <ListItem 
             button
-            onClick={() => handleListItemClick(7, "/")}>
+            onClick={() => handleLogout(7, '/')}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -195,7 +227,7 @@ function Home() {
         }}
       >
         <header>
-          <h1 style={{color: "#0F1D9F"}}>Hello, {firstName}!</h1>
+          <h1 style={{color: "#0F1D9F"}}>Hello, {firstName}! Welcome back, {userRole}!</h1>
           <input type="search" placeholder="Search" className="search-bar-home" />
         </header>
 
