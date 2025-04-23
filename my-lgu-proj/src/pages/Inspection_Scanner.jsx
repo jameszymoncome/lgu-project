@@ -10,6 +10,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PeopleIcon from "@mui/icons-material/People";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material"; 
 import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import "./Inspection_Scanner.css";
@@ -21,6 +22,7 @@ import {
     TableHead,
     TableRow,
     Paper,
+    IconButton,
   } from "@mui/material";
 import Header from "../components/Header/Header.jsx";
 import { red } from "@mui/material/colors";
@@ -32,10 +34,7 @@ const drawerWidth = 240;
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   marginTop: "10px",
-  marginLeft: "30px",
-  marginRight: "20px",
   width: "100%",
-  maxWidth: "1130px",
   overflowY: "auto",
   borderRadius: "10px",
   border: "1px solid #979797",
@@ -98,10 +97,22 @@ const Inspection_Scanner = () => {
     try {
       const response = await axios.get(`http://localhost:5000/item-scanned/${id}`);
       if (response.data && response.data.data) {
-        setFormId(response.data.data.form_id || ""); // Ensure form_id is set
-        setItemDescription(response.data.data.description || ""); // Ensure description is set
-        setItemGet([response.data.data]); // Wrap the data in an array for mapping
-        console.log("Scanned Data:", response.data.data);
+        setFormId(response.data.data.form_id || "");
+        setItemDescription(response.data.data.description || "");
+
+        setItemGet((prevItems) => {
+          // Check if the item already exists in the array
+          const isDuplicate = prevItems.some((item) => item.itemIds === response.data.data.itemIds);
+        
+          if (!isDuplicate) {
+            // If not a duplicate, add the new item
+            return [...prevItems, response.data.data];
+          } else {
+            console.log("Duplicate item detected:", response.data.data);
+            return prevItems; // Return the array unchanged
+          }
+        });
+
       } else {
         console.error("Invalid response format:", response.data);
         alert("No data found for the scanned ID.");
@@ -173,31 +184,47 @@ const Inspection_Scanner = () => {
       alert("Please enter a Property/Inventory ID.");
       return;
     }
-    try {
-      const response = await axios.get(`http://localhost:5000/item-search/${proInvenID}`);
-      if (response.data && response.data.data) {
-        setGetItems(response.data);
-        console.log("Scanned Data:", response.data);
-      } else {
-        setGetItems(response.data);
-        console.error("Invalid response format:", response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching scanned details:", error);
-      alert("Failed to fetch scanned details.");
-    }
-
-    setOverlayVisible(true);
+    scannedDetial(proInvenID); // Call the scannedDetial function to fetch data
+    // try {
+    //   const response = await axios.get(`http://localhost:5000/item-search/${proInvenID}`);
+    //   if (response.data && response.data.data) {
+    //     setGetItems(response.data.data);
+    //     console.log("Scanned Data:", response.data);
+    //   } else {
+    //     setGetItems(response.data.data);
+    //     console.error("Invalid response format:", response.data);
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching scanned details:", error);
+    //   alert("Failed to fetch scanned details.");
+    // }
   };
+
+  const handleView = (account) => {
+    
+  }
+
   const closeOverlay = () => {
     setOverlayVisible(false); // Hide the overlay
   };
 
+  const groupedItems = itemGet.reduce((acc, item) => {
+    const key = `${item.description}-${item.form_id}-${item.quantity}`; // Create a unique key
+    if (!acc[key]) {
+      acc[key] = { ...item, count: 1 }; // Initialize with count 1
+    } else {
+      acc[key].count += 1; // Increment count for duplicates
+    }
+    return acc;
+  }, {});
+
+  const groupedArray = Object.values(groupedItems);
+
+
   return (
     <div style={{ display: "flex" }}>
         <Header />
-
-        {isOverlayVisible && (
+        {/* {isOverlayVisible && (
           <div
             style={{
               position: "fixed",
@@ -246,12 +273,29 @@ const Inspection_Scanner = () => {
                   </button>
                 </>
               ) : (
-                <p>No data found for the scanned ID.</p>
+                <>
+                  <p>No data found for the scanned ID.</p>
+                  <button
+                    onClick={closeOverlay}
+                    style={{
+                      marginTop: "20px",
+                      padding: "10px 20px",
+                      backgroundColor: "#0F1D9F",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Close
+                  </button>
+                </>
+                
               )
               }
             </div>
           </div>
-        )}
+        )} */}
 
         <Drawer
         variant="permanent"
@@ -469,20 +513,38 @@ const Inspection_Scanner = () => {
                 <Table size="medium">
                   <TableHead>
                     <TableRow>
-                      {["Description", "Property/Inventory Number", "PAR/ICS No.", "Expected Item", "Item Scanned", "Items Remaining", "Status"].map((header) =>
+                      {["Description", "Property/Inventory Number", "PAR/ICS No.", "Expected Count", "Item Scanned", "Items Remaining", "Status", "Action"].map((header) =>
                         (<StyledTableDataCell key={header} isHeader>{header}</StyledTableDataCell>)
                       )}
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
-                    {itemGet.map((row) => (
+                    {groupedArray.map((row) => (
                       <TableRow>
-                      <StyledTableDataCell>{row.description}</StyledTableDataCell>
-                      <StyledTableDataCell>{row.form_id}</StyledTableDataCell>
-                      <StyledTableDataCell>{row.itemIds}</StyledTableDataCell>
-                      <StyledTableDataCell>{row.quantity}</StyledTableDataCell>
-                      
+                        <StyledTableDataCell>{row.description}</StyledTableDataCell>
+                        <StyledTableDataCell>{row.itemIds}</StyledTableDataCell>
+                        <StyledTableDataCell>{row.form_id}</StyledTableDataCell>
+                        <StyledTableDataCell>{row.quantity}</StyledTableDataCell>
+                        <StyledTableDataCell>{row.count}</StyledTableDataCell>
+                        <StyledTableDataCell>{row.quantity - row. count}</StyledTableDataCell>
+                        <StyledTableDataCell>{row.quantity - row. count === 0 ? "Complete" : "Incomplete"}</StyledTableDataCell>
+                        <StyledTableDataCell>
+                          {/* Edit Button */}
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleView(account)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          {/* Delete Button */}
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDelete(account.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </StyledTableDataCell>
       
                       </TableRow>
                     ))}
