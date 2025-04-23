@@ -59,6 +59,8 @@ const Inspection_Scanner = () => {
   const [itemDescription, setItemDescription] = useState('');
   const [formId, setFormId] = useState('');
   const [itemGet, setItemGet] = useState([]);
+  const [isOverlayVisible, setOverlayVisible] = useState(false);
+  const [isGetItems, setGetItems] = useState(false);
 
   const startScanner = () => {
     console.log("Scanner started"); // Log when the scanner starts
@@ -166,9 +168,90 @@ const Inspection_Scanner = () => {
     setSelectedStatus(event.target.value);
   };
 
+  const handleConfirm = async () => {
+    if (!proInvenID) {
+      alert("Please enter a Property/Inventory ID.");
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:5000/item-search/${proInvenID}`);
+      if (response.data && response.data.data) {
+        setGetItems(response.data);
+        console.log("Scanned Data:", response.data);
+      } else {
+        setGetItems(response.data);
+        console.error("Invalid response format:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching scanned details:", error);
+      alert("Failed to fetch scanned details.");
+    }
+
+    setOverlayVisible(true);
+  };
+  const closeOverlay = () => {
+    setOverlayVisible(false); // Hide the overlay
+  };
+
   return (
     <div style={{ display: "flex" }}>
         <Header />
+
+        {isOverlayVisible && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1300, // Ensure it appears above the drawer
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                padding: "20px",
+                borderRadius: "10px",
+                width: "400px",
+                textAlign: "center",
+              }}
+            >
+              {isGetItems ? (
+                <>
+                  <h2 style={{ color: "#0F1D9F" }}>Overlay Content</h2>
+                  <p>Here are the details of the scanned item:</p>
+                  <div style={{ textAlign: "left", marginTop: "10px" }}>
+                    <p><strong>Form ID:</strong> {formId || "N/A"}</p>
+                    <p><strong>Description:</strong> {itemDescription || "N/A"}</p>
+                    <p><strong>Other Details:</strong> {itemGet.length > 0 ? JSON.stringify(itemGet[0]) : "No additional details available."}</p>
+                  </div>
+                  <button
+                    onClick={closeOverlay}
+                    style={{
+                      marginTop: "20px",
+                      padding: "10px 20px",
+                      backgroundColor: "#0F1D9F",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Close
+                  </button>
+                </>
+              ) : (
+                <p>No data found for the scanned ID.</p>
+              )
+              }
+            </div>
+          </div>
+        )}
 
         <Drawer
         variant="permanent"
@@ -371,7 +454,8 @@ const Inspection_Scanner = () => {
                     <button 
                       style={{
                         borderRadius: "10px"
-                      }}>
+                      }}
+                      onClick={handleConfirm}>
                       Confirm
                     </button>
                   </div>
@@ -395,8 +479,9 @@ const Inspection_Scanner = () => {
                     {itemGet.map((row) => (
                       <TableRow>
                       <StyledTableDataCell>{row.description}</StyledTableDataCell>
-                      <StyledTableDataCell>{row.quantity}</StyledTableDataCell>
                       <StyledTableDataCell>{row.form_id}</StyledTableDataCell>
+                      <StyledTableDataCell>{row.itemIds}</StyledTableDataCell>
+                      <StyledTableDataCell>{row.quantity}</StyledTableDataCell>
                       
       
                       </TableRow>
@@ -404,63 +489,6 @@ const Inspection_Scanner = () => {
                   </TableBody>
                 </Table>
               </StyledTableContainer>
-
-              {/* <TableContainer component="div">
-                <Table size="medium" sx={{ borderCollapse: 'collapse' }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        Description
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        Property/Inventory Number
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        PAR/ICS No.
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        Expected Item
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        Item Scanned
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        Items Remaining
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem", borderBottom: '1px solid #000', borderTop: '1px solid #000', width: "14.28%", textAlign: "center", padding: "0.5em" }}>
-                        Staus
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.Description}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.PropertyInventory}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.PARICS}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.ExItem}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.ItemSca}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.ItemRem}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "1rem", borderBottom: '1px solid #000', textAlign: 'center', padding: "0.5em" }}>
-                        {row.stats}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  </TableBody>
-                </Table>
-              </TableContainer> */}
             </div>
 
             <div style={{display: 'flex', justifyContent: 'end', gap: "10px"}}>
