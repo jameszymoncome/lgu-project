@@ -10,7 +10,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PeopleIcon from "@mui/icons-material/People";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material"; 
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility as ViewIcon } from "@mui/icons-material"; 
 import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import "./Inspection_Scanner.css";
@@ -60,6 +60,9 @@ const Inspection_Scanner = () => {
   const [itemGet, setItemGet] = useState([]);
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const [isGetItems, setGetItems] = useState(false);
+  const [selectedFormId, setSelectedFormId] = useState(false);
+  const [activeButton, setActiveButton] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null); // State to track the selected row
 
   const startScanner = () => {
     console.log("Scanner started"); // Log when the scanner starts
@@ -93,7 +96,7 @@ const Inspection_Scanner = () => {
     setQrScanned(true); // Set the flag to true when the scanner is started
   };
 
-  const scannedDetial = async (id) => {
+  const scannedDetial = async (id, stattts) => {
     try {
       const response = await axios.get(`http://localhost:5000/item-scanned/${id}`);
       if (response.data && response.data.data) {
@@ -106,10 +109,15 @@ const Inspection_Scanner = () => {
         
           if (!isDuplicate) {
             // If not a duplicate, add the new item
-            return [...prevItems, response.data.data];
+            return [...prevItems, { ...response.data.data, status: stattts }];
           } else {
             console.log("Duplicate item detected:", response.data.data);
-            return prevItems; // Return the array unchanged
+            return prevItems.map((item) =>
+              item.itemIds === response.data.data.itemIds
+                ? { ...item, status: stattts }
+                : item
+            );
+            // return prevItems; // Return the array unchanged
           }
         });
 
@@ -179,34 +187,41 @@ const Inspection_Scanner = () => {
     setSelectedStatus(event.target.value);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (statts) => {
     if (!proInvenID) {
       alert("Please enter a Property/Inventory ID.");
       return;
     }
-    scannedDetial(proInvenID); // Call the scannedDetial function to fetch data
-    // try {
-    //   const response = await axios.get(`http://localhost:5000/item-search/${proInvenID}`);
-    //   if (response.data && response.data.data) {
-    //     setGetItems(response.data.data);
-    //     console.log("Scanned Data:", response.data);
-    //   } else {
-    //     setGetItems(response.data.data);
-    //     console.error("Invalid response format:", response.data);
-    //   }
-    // } catch (error) {
-    //   console.error("Error fetching scanned details:", error);
-    //   alert("Failed to fetch scanned details.");
-    // }
-  };
+    scannedDetial(proInvenID, statts);
+    // setItemDescription("");
+    // setproInvenID("");
+    // setFormId("");
 
-  const handleView = (account) => {
-    
-  }
+  };
 
   const closeOverlay = () => {
     setOverlayVisible(false); // Hide the overlay
   };
+
+  const handleView = (row) => {
+    const matchingItems = itemGet.filter(
+      (item) =>
+        item.description === row.description &&
+        item.form_id === row.form_id &&
+        item.quantity === row.quantity
+    );
+    setGetItems(matchingItems);
+    setOverlayVisible(true); // Show the overlay
+  };
+
+  const handleEdit = (row) => {
+    setScanResult(row.itemIds);
+    setItemDescription(row.description);
+    setFormId(row.form_id);
+    setActiveButton(row.status);
+    console.log("Edit clicked for row:", row.description);
+    closeOverlay(); // Close the overlay after editing
+  }
 
   const groupedItems = itemGet.reduce((acc, item) => {
     const key = `${item.description}-${item.form_id}-${item.quantity}`; // Create a unique key
@@ -224,7 +239,7 @@ const Inspection_Scanner = () => {
   return (
     <div style={{ display: "flex" }}>
         <Header />
-        {/* {isOverlayVisible && (
+        {isOverlayVisible && (
           <div
             style={{
               position: "fixed",
@@ -244,58 +259,68 @@ const Inspection_Scanner = () => {
                 backgroundColor: "white",
                 padding: "20px",
                 borderRadius: "10px",
-                width: "400px",
                 textAlign: "center",
               }}
             >
-              {isGetItems ? (
-                <>
-                  <h2 style={{ color: "#0F1D9F" }}>Overlay Content</h2>
-                  <p>Here are the details of the scanned item:</p>
-                  <div style={{ textAlign: "left", marginTop: "10px" }}>
-                    <p><strong>Form ID:</strong> {formId || "N/A"}</p>
-                    <p><strong>Description:</strong> {itemDescription || "N/A"}</p>
-                    <p><strong>Other Details:</strong> {itemGet.length > 0 ? JSON.stringify(itemGet[0]) : "No additional details available."}</p>
-                  </div>
-                  <button
-                    onClick={closeOverlay}
-                    style={{
-                      marginTop: "20px",
-                      padding: "10px 20px",
-                      backgroundColor: "#0F1D9F",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Close
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p>No data found for the scanned ID.</p>
-                  <button
-                    onClick={closeOverlay}
-                    style={{
-                      marginTop: "20px",
-                      padding: "10px 20px",
-                      backgroundColor: "#0F1D9F",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Close
-                  </button>
-                </>
-                
-              )
-              }
+              <h2 style={{ color: "#0F1D9F" }}>Form ID</h2>
+              <div style={{ textAlign: "left", marginTop: "10px" }}>
+                <p><strong>Description:</strong></p>
+                {isGetItems.map((item, index) => (
+                  <p>{item.description || "N/A"}</p>
+                ))}
+              </div>
+              <div style={{ marginTop: "20px", width: "100%", marginBottom: "100px"}}>
+                <StyledTableContainer component={Paper}>
+                  <Table size="medium">
+                    <TableRow>
+                      {["Property/Inventory Number", "Status", "Action"].map((header) =>
+                        (<StyledTableDataCell key={header} isHeader>{header}</StyledTableDataCell>)
+                      )}
+                    </TableRow>
+                    <TableBody>
+                    {isGetItems.map((item, index) => (
+                      <TableRow key={index}>
+                        <StyledTableDataCell>{item.itemIds}</StyledTableDataCell>
+                        <StyledTableDataCell>{item.status}</StyledTableDataCell>
+                        <StyledTableDataCell>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleEdit(item)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDelete(account.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </StyledTableDataCell>
+                        
+                      </TableRow>
+                    ))}
+                    </TableBody>
+                  </Table>
+                </StyledTableContainer>
+              </div>
+
+              <button
+                onClick={closeOverlay}
+                style={{
+                  marginTop: "20px",
+                  padding: "10px 20px",
+                  backgroundColor: "#0F1D9F",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Close
+              </button>
             </div>
           </div>
-        )} */}
+        )}
 
         <Drawer
         variant="permanent"
@@ -466,24 +491,7 @@ const Inspection_Scanner = () => {
                   </div>
                   
                   <div style={{display: "flex", gap: "10px", marginBottom: "10px"}}>
-                    <h4 style={{color: "#0F1D9F", margin: 0 }}>Status</h4>
-                    <select 
-                      value={selectedStatus} 
-                      onChange={selStats}
-                      style={{
-                        fontSize: "16px",
-                        width: "150px",
-                      }}
-                      >
-                      <option value="" disabled>
-                        Filters
-                      </option>
-                      {options.map((option, index) => (
-                        <option key={index} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
+                    <h4 style={{color: "#0F1D9F", margin: 0 }}>Status:</h4>
                   </div>
                   <div style={{display: 'flex', gap: "10px"}}>
                     <button 
@@ -496,11 +504,31 @@ const Inspection_Scanner = () => {
                       Cancel
                     </button>
                     <button 
-                      style={{
+                      style={{backgroundColor: activeButton === "Serviceable" ? "#0F1D9F" : "white",
+                        color: activeButton === "Serviceable" ? "white" : 'black',
+                        border: "2px solid #0F1D9F",
+                        borderWidth: "2px",
                         borderRadius: "10px"
                       }}
-                      onClick={handleConfirm}>
-                      Confirm
+                      onClick={() => {
+                        handleConfirm("Serviceable");
+                        setActiveButton("Serviceable"); // Set the state to true when this button is clicked
+                      }}>
+                      Servicesable
+                    </button>
+                    <button 
+                      style={{backgroundColor: activeButton === "UnServiceable" ? "#0F1D9F" : "white",
+                      color: activeButton === "UnServiceable" ? "white" : 'black',
+                      border: "2px solid #0F1D9F",
+                      borderWidth: "2px",
+                      borderRadius: "10px"
+                      }}
+                      onClick={() => {
+                        handleConfirm("UnServiceable");
+                        setActiveButton("UnServiceable"); // Set the state to true when this button is clicked
+                        }}
+                      >
+                      Unservicesable
                     </button>
                   </div>
                     
@@ -520,8 +548,15 @@ const Inspection_Scanner = () => {
                   </TableHead>
 
                   <TableBody>
-                    {groupedArray.map((row) => (
-                      <TableRow>
+                    {groupedArray.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        onClick={() => setSelectedRow(index)} // Set the selected row index on click
+                        style={{
+                          backgroundColor: selectedRow === index ? "#e0f7fa" : "white", // Highlight selected row
+                          cursor: "pointer", // Add pointer cursor for better UX
+                        }}
+                      >
                         <StyledTableDataCell>{row.description}</StyledTableDataCell>
                         <StyledTableDataCell>{row.itemIds}</StyledTableDataCell>
                         <StyledTableDataCell>{row.form_id}</StyledTableDataCell>
@@ -530,12 +565,12 @@ const Inspection_Scanner = () => {
                         <StyledTableDataCell>{row.quantity - row. count}</StyledTableDataCell>
                         <StyledTableDataCell>{row.quantity - row. count === 0 ? "Complete" : "Incomplete"}</StyledTableDataCell>
                         <StyledTableDataCell>
-                          {/* Edit Button */}
+                          {/* View Button */}
                           <IconButton
                             color="primary"
-                            onClick={() => handleView(account)}
+                            onClick={() => handleView(row)}
                           >
-                            <EditIcon />
+                            <ViewIcon />
                           </IconButton>
                           {/* Delete Button */}
                           <IconButton
