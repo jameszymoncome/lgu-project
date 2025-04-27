@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Home.css"; // Custom styles
 import Icon from "../assets/images/sample_icon.png";
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Collapse} from "@mui/material";
@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const drawerWidth = 240;
 
@@ -35,9 +36,51 @@ function Home_user() {
     navigate(path); // Navigate to the selected route
   };
 
+  const handleLogout = (index, path) => {
+      setSelectedIndex(index); // Update the selected menu item
+      Swal.fire({
+        icon: "question",
+        title: "Are you sure?",
+        text: "Do you really want to log out?",
+        showCancelButton: true, // Show the "No" button
+        confirmButtonText: "Yes, Logout",
+        cancelButtonText: "No, Stay",
+        background: "#f9f9f9", // Light background
+        color: "#333", // Dark text color for contrast
+        confirmButtonColor: "#d33", // Red color for "Yes" button
+        cancelButtonColor: "#0F1D9F", // Blue color for "No" button
+        customClass: {
+          popup: "minimal-popup", // Add a custom class for further styling
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Perform logout logic
+          localStorage.clear(); // Clear user data
+          navigate(path); // Redirect to login page
+        } else {
+          // Optional: Handle "No" button click (if needed)
+          console.log("User chose to stay logged in.");
+        }
+      });
+    };
+
   const toggleReportMenu = () => {
     setReportMenuOpen((prevOpen) => !prevOpen); // Toggle sub-menu visibility
   };
+
+  const [firstName, setFirstName] = useState("");
+  const [userRole, setUserRole] = useState("");
+    
+      useEffect(() => {
+        const storedFirstName = localStorage.getItem("firstName");
+        const storeduserRole = localStorage.getItem("userRole");
+        if (storedFirstName) {
+            setFirstName(storedFirstName);
+            setUserRole(storeduserRole);
+        } else {
+            navigate("/login"); // Redirect to login if no first name is found
+        }
+    }, [navigate]);
 
   return (
     <div style={{ display: "flex" }}>
@@ -63,7 +106,7 @@ function Home_user() {
           <ListItem
             button
             style={{ color: "#0F1D9F"}}
-            onClick={() => handleListItemClick(0, "/home")}
+            onClick={() => handleListItemClick(0, "/home-user")}
           >
             <ListItemIcon>
               <HomeIcon style={{ color:"#0F1D9F"}} />
@@ -84,7 +127,7 @@ function Home_user() {
               <ListItem
                 button
                 style={{ paddingLeft: 32}}
-                onClick={() => handleListItemClick(5, "/par-ics")}
+                onClick={() => handleListItemClick(5, "/user-parics1")}
               >
                 <ListItemIcon>
                 <AssignmentIcon/>
@@ -94,7 +137,7 @@ function Home_user() {
               <ListItem
                 button
                 style={{ paddingLeft: 32}}
-                onClick={() => handleListItemClick(4, "/inventory")}
+                onClick={() => handleListItemClick(4, "/user-invreport")}
               >
               <ListItemIcon>
                 <AssignmentIcon/>
@@ -105,7 +148,7 @@ function Home_user() {
           </Collapse>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/profile")}
+            onClick={() => handleListItemClick(6, "/user-profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>
@@ -114,7 +157,7 @@ function Home_user() {
           </ListItem>
           <ListItem 
             button
-            onClick={() => handleListItemClick(7, "/")}>
+            onClick={() => handleLogout(7, "/")}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -131,8 +174,8 @@ function Home_user() {
         }}
       >
         <header>
-          <h1>Hello, User!</h1>
-          <input type="search" placeholder="Search" className="search-bar" />
+          <h1>Hello, {firstName}! Welcome back, {userRole}!</h1>
+          <input type="search" placeholder="Search" className="search-bar-home" />
         </header>
 
         {/* Summary Cards */}
