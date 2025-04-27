@@ -29,6 +29,7 @@ import { red } from "@mui/material/colors";
 import axios from "axios";
 import { styled } from "@mui/system";
 import Swal from "sweetalert2";
+import { use } from "react";
 
 const drawerWidth = 240;
 
@@ -64,6 +65,25 @@ const Inspection_Scanner = () => {
   const [activeButton, setActiveButton] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null); // State to track the selected row
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/item-check`);
+
+        if (response.data.success) {
+          setItemGet((prevItems) => [...prevItems, ...response.data.data]);
+
+        } else {
+          
+        }
+      } catch (error) {
+        console.error("Error fetching scanned details:", error);
+        alert("Failed to fetch scanned details. Please try again.");
+      }
+    }
+    fetchData();
+  }, );
+
   const startScanner = () => {
     console.log("Scanner started"); // Log when the scanner starts
     const readerElement = document.getElementById("reader");
@@ -93,7 +113,7 @@ const Inspection_Scanner = () => {
         console.warn(error); // Log errors for debugging
       }
     );
-    setQrScanned(true); // Set the flag to true when the scanner is started
+    setQrScanned(true);
   };
 
   const scannedDetial = async (id, stattts) => {
@@ -109,27 +129,32 @@ const Inspection_Scanner = () => {
         
           if (!isDuplicate) {
             // If not a duplicate, add the new item
+            // console.log("New item added:", response.data.data);
             return [...prevItems, { ...response.data.data, status: stattts }];
           } else {
-            console.log("Duplicate item detected:", response.data.data);
+            // console.log("Duplicate item detected:", response.data.data);
             return prevItems.map((item) =>
               item.itemIds === response.data.data.itemIds
                 ? { ...item, status: stattts }
                 : item
             );
-            // return prevItems; // Return the array unchanged
           }
         });
+        savetoBackup(response.data.data.itemIds, stattts);
 
       } else {
         console.error("Invalid response format:", response.data);
-        alert("No data found for the scanned ID.");
+        alert(response.data.message);
       }
     } catch (error) {
       console.error("Error fetching scanned details:", error);
       alert("Failed to fetch scanned details. Please try again.");
     }
   };
+  
+  const savetoBackup = async (ids, staat) => {
+    console.log("Saving to backup.", ids, staat); // Log when saving starts
+  }
 
   const data = [
     { Description: "MAYOR'S OFFICE", PropertyInventory: "2024-12-01", PARICS: "Completed", ExItem: "2", ItemSca: "2", ItemRem: "2", stats: "Good" },
@@ -200,7 +225,7 @@ const Inspection_Scanner = () => {
   };
 
   const closeOverlay = () => {
-    setOverlayVisible(false); // Hide the overlay
+    setOverlayVisible(false);
   };
 
   const handleView = (row) => {
@@ -211,7 +236,7 @@ const Inspection_Scanner = () => {
         item.quantity === row.quantity
     );
     setGetItems(matchingItems);
-    setOverlayVisible(true); // Show the overlay
+    setOverlayVisible(true);
   };
 
   const handleEdit = (row) => {
@@ -219,8 +244,7 @@ const Inspection_Scanner = () => {
     setItemDescription(row.description);
     setFormId(row.form_id);
     setActiveButton(row.status);
-    console.log("Edit clicked for row:", row.description);
-    closeOverlay(); // Close the overlay after editing
+    closeOverlay();
   }
 
   const groupedItems = itemGet.reduce((acc, item) => {
@@ -232,6 +256,35 @@ const Inspection_Scanner = () => {
     }
     return acc;
   }, {});
+
+  const handleDelete = (item) => {
+    setGetItems((prevItems) => {
+      const updatedItems = prevItems.filter((i) => i.itemIds !== item.itemIds);
+  
+      const remainingItems = updatedItems.filter(
+        (i) =>
+          i.description === item.description &&
+          i.form_id === item.form_id &&
+          i.quantity === item.quantity
+      );
+  
+      if (remainingItems.length === 0) {
+        setItemGet((prevItemGet) =>
+          prevItemGet.filter(
+            (i) =>
+              i.description !== item.description ||
+              i.form_id !== item.form_id ||
+              i.quantity !== item.quantity
+          )
+        );
+
+        closeOverlay();
+      }
+  
+      console.log("Updated isGetItems:", updatedItems); // Debugging
+      return updatedItems;
+    });
+  };
 
   const groupedArray = Object.values(groupedItems);
 
@@ -291,7 +344,7 @@ const Inspection_Scanner = () => {
                           </IconButton>
                           <IconButton
                             color="error"
-                            onClick={() => handleDelete(account.id)}
+                            onClick={() => handleDelete(item)}
                           >
                             <DeleteIcon />
                           </IconButton>
@@ -573,12 +626,6 @@ const Inspection_Scanner = () => {
                             <ViewIcon />
                           </IconButton>
                           {/* Delete Button */}
-                          <IconButton
-                            color="error"
-                            onClick={() => handleDelete(account.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
                         </StyledTableDataCell>
       
                       </TableRow>
@@ -602,7 +649,9 @@ const Inspection_Scanner = () => {
               <button
                 style={{
                   borderRadius: "10px"
-                }}>
+                }}
+                onClick={() => savetoBackup()}
+                >
                 Save
               </button>
             </div>
