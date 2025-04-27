@@ -112,5 +112,9 @@
     padding: 10px 20px;
     border-radius: 8px; /* Rounded button */
   }
+  .swal2-container {
+    position: fixed !important;
+    z-index: 1500 !important; /* Ensure it overlays the Drawer */
+  }
  
   

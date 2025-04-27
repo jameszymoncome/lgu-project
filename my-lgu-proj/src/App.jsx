@@ -15,6 +15,15 @@ import Profile from "./pages/Profile.jsx";
 import Item_history from "./pages/Item_history.jsx";
 import Inspection_Scanner from "./pages/Inspection_Scanner.jsx";
 import ForgotPassword from "./features/Auth/ForgotPassword.jsx";
+import EncoderPPE_Entry from "./pages/EncoderPages/EconderPPE_Entry.jsx";
+import EncoderInven_Inspect from "./pages/EncoderPages/EncoderInven_Inspect.jsx";
+import EncoderPAR_ICS1 from "./pages/EncoderPages/EncoderPAR_ICS1.jsx";
+import EncoderInventoryReport from "./pages/EncoderPages/EncoderInventoryReport.jsx";
+import EncoderProfile from "./pages/EncoderPages/EncoderProfile.jsx";
+import UserPAR_ICS1 from "./pages/UserPages/UserPAR_ICS1.jsx";
+import UserInventoryReport from "./pages/UserPages/UserInventoryReport.jsx";
+import UserProfile from "./pages/UserPages/UserProfile.jsx";
+
 
 function App() {
   return (
@@ -40,6 +49,14 @@ function App() {
         <Route path="/item-history" element={<Item_history />} />
         <Route path="/inspec-scanner" element={<Inspection_Scanner />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/encoder-ppeentry" element={<EncoderPPE_Entry />} />
+        <Route path="/encoder-inveninspect" element={<EncoderInven_Inspect />} />
+        <Route path="/encoder-parics1" element={<EncoderPAR_ICS1 />} />
+        <Route path="/encoder-invreport" element={<EncoderInventoryReport />} />
+        <Route path="/encoder-profile" element={<EncoderProfile />} />
+        <Route path="/user-parics1" element={<UserPAR_ICS1 />} />
+        <Route path="/user-invreport" element={<UserInventoryReport />} />
+        <Route path="/user-profile" element={<UserProfile />} />
       </Routes>
     </Router>
   );
