@@ -64,25 +64,47 @@ const Inspection_Scanner = () => {
   const [selectedFormId, setSelectedFormId] = useState(false);
   const [activeButton, setActiveButton] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null); // State to track the selected row
+  const [isContinue, setIsConinue] = useState(false); // State to track loading status
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/item-check`);
-
-        if (response.data.success) {
-          setItemGet((prevItems) => [...prevItems, ...response.data.data]);
-
-        } else {
-          
-        }
-      } catch (error) {
-        console.error("Error fetching scanned details:", error);
-        alert("Failed to fetch scanned details. Please try again.");
-      }
-    }
     fetchData();
-  }, );
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/item-check`);
+
+      if (response.data.success) {
+        Swal.fire({
+          title: "Backup Confirmation",
+          text: "Do you want to continue with the backup data?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Continue",
+          cancelButtonText: "No, Cancel",
+          confirmButtonColor: "#0F1D9F",
+          cancelButtonColor: "#d33",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If the user confirms, store the data in itemGet
+            setItemGet((prevItems) => [...prevItems, ...response.data.data]);
+            console.log("Fetched data stored in itemGet:", response.data.data);
+          } else {
+            console.log("User canceled the backup.");
+          }
+        });
+
+        // setItemGet((prevItems) => [...prevItems, ...response.data.data]);
+        // return console.log("Fetched data:", response.data.data);
+
+
+      } else {
+        
+      }
+    } catch (error) {
+      console.error("Error fetching scanned details:", error);
+    }
+  }
 
   const startScanner = () => {
     console.log("Scanner started"); // Log when the scanner starts
@@ -151,9 +173,36 @@ const Inspection_Scanner = () => {
       alert("Failed to fetch scanned details. Please try again.");
     }
   };
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+  
+    // Get the date in YYYY-MM-DD format
+    const date = now.toISOString().split("T")[0];
+  
+    // Get the time in HH:MM:SS format
+    const time = now.toTimeString().split(" ")[0];
+  
+    return { date, time };
+  };
   
   const savetoBackup = async (ids, staat) => {
-    console.log("Saving to backup.", ids, staat); // Log when saving starts
+
+    const { date, time } = getCurrentDateTime();
+    try {
+      const response = await axios.get(`http://localhost:5000/ppe-entries-backup/${ids}/${date}/${time}/${staat}`);
+      if(response.data.success) {
+        console.log("Data saved to backup successfully:", response.data.data);
+      }
+      else {  
+        console.error("Failed to save data to backup:", response.data.message);
+        alert("Failed to save data to backup. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving to backup:", error);
+      alert("Failed to save to backup. Please try again.");
+    }
+    console.log("Saving to backup.", date, time);
   }
 
   const data = [
@@ -245,6 +294,7 @@ const Inspection_Scanner = () => {
     setFormId(row.form_id);
     setActiveButton(row.status);
     closeOverlay();
+    setproInvenID(row.itemIds);
   }
 
   const groupedItems = itemGet.reduce((acc, item) => {
@@ -374,6 +424,8 @@ const Inspection_Scanner = () => {
             </div>
           </div>
         )}
+
+        {}
 
         <Drawer
         variant="permanent"
