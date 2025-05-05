@@ -23,6 +23,10 @@ import EncoderProfile from "./pages/EncoderPages/EncoderProfile.jsx";
 import UserPAR_ICS1 from "./pages/UserPages/UserPAR_ICS1.jsx";
 import UserInventoryReport from "./pages/UserPages/UserInventoryReport.jsx";
 import UserProfile from "./pages/UserPages/UserProfile.jsx";
+import Notification from "./pages/Notification.jsx";
+import PurchaseRequest from "./pages/PurchaseRequest.jsx";
+import ApprovePR from "./pages/ApprovePR.jsx";
+import ListPR from "./pages/ListPR.jsx";
 
 
 function App() {
@@ -57,6 +61,10 @@ function App() {
         <Route path="/user-parics1" element={<UserPAR_ICS1 />} />
         <Route path="/user-invreport" element={<UserInventoryReport />} />
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/notification" element={<Notification />} />
+        <Route path="/purchase-request" element={<PurchaseRequest />} />
+        <Route path="/approve-pr" element={<ApprovePR />} />
+        <Route path="/list-pr" element={<ListPR />} />
       </Routes>
     </Router>
   );

@@ -22,6 +22,7 @@ import {
 import Header from "../components/Header/Header.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import { Notifications, NotificationsActive, NotificationsNone, NotificationsOff } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -201,7 +202,16 @@ function Home() {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleListItemClick(6, "/profile")}
+            onClick={() => handleListItemClick(6, "/notification")}
+          >
+            <ListItemIcon>
+              <Notifications/>
+            </ListItemIcon>
+            <ListItemText primary="Notification" />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(7, "/profile")}
           >
             <ListItemIcon>
               <AccountCircleIcon/>
@@ -210,7 +220,7 @@ function Home() {
           </ListItem>
           <ListItem 
             button
-            onClick={() => handleLogout(7, '/')}>
+            onClick={() => handleLogout(8, '/')}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
